@@ -1,0 +1,18 @@
+#BlueJ class context
+comment0.target=Road
+comment0.text=\r\n\ Is\ the\ class\ in\ charge\ of\ the\ graphical\ representation\ of\ the\ road\ in\ the\ silk\ orad\ problem.\r\n\ \r\n\ @author\ Paula\ Alejandra\ D\u00EDaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 1\r\n
+comment1.params=length
+comment1.target=Road(int)
+comment2.params=location
+comment2.target=boolean\ in(int)
+comment2.text=\r\n\ answers\ if\ a\ location\ is\ inside\ the\ road\r\n\ @param\ int\ location\r\n\ @return\ boolean\r\n
+comment3.params=
+comment3.target=void\ makeVisible()
+comment3.text=\r\n\ makes\ the\ road\ visible\r\n\ @return\ void\r\n
+comment4.params=
+comment4.target=void\ makeInvisible()
+comment4.text=\r\n\ makes\ the\ road\ invisible\r\n\ @return\ void\r\n
+comment5.params=location
+comment5.target=int[]\ giveCoordinates(int)
+comment5.text=\r\n\ gives\ coordinates\ of\ the\ position\ in\ the\ canvas\ of\ a\ certain\ location\ in\ the\ road\r\n\ @param\ int\ location\r\n\ @return\ int[]\r\n
+numComments=6

@@ -1,33 +1,66 @@
-
 /**
- * Write a description of class Store here.
+ * Is the class in charge of the graphical representation and behaviour of the stores in the silk road problem.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Paula Alejandra Díaz
+ * @author Juan Pablo Vélez
+ * @version 1
  */
-public class Store
-{
-    // instance variables - replace the example below with your own
-    private int x;
-
+public class Store{
+    // Attributes
+    private final int location;
+    private final int stash;
+    private boolean full;
+    private boolean isVisible;
+    private Rectangle facade;
+    private Triangle roof;
+    
+    // Methods
     /**
      * Constructor for objects of class Store
      */
-    public Store()
-    {
-        // initialise instance variables
-        x = 0;
+    public Store(int location, int tenges){
+        this.location = location;
+        stash = tenges;
+        full = true;
+        isVisible = false;
+        //ajustar los constructores
+        facade = new Rectangle();
+        roof = new Triangle();
     }
-
+    
     /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
+     * makes the store visible
+     * @return void
      */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public void makeVisible(){
+        isVisible = true;
+        facade.makeVisible();
+        roof.makeVisible();
+    }
+    
+    /**
+     * makes the store invisible
+     * @return void
+     */
+    public void makeInvisible(){
+        isVisible = false;
+        facade.makeInvisible();
+        roof.makeInvisible();
+    }
+    
+    /**
+     * reset the stash to the initial amount
+     * @return void
+     */
+    public void resupply(){
+        full = true;
+    }
+    
+    /**
+     * gives the stash amount
+     * @return int
+     */
+    public int getStash(){
+        return stash;
     }
 }

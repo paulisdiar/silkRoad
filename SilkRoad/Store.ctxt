@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=Store
+comment0.text=\r\n\ Is\ the\ class\ in\ charge\ of\ the\ graphical\ representation\ and\ behaviour\ of\ the\ stores\ in\ the\ silk\ road\ problem.\r\n\ \r\n\ @author\ Paula\ Alejandra\ D\u00EDaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 1\r\n
+comment1.params=location\ tenges
+comment1.target=Store(int,\ int)
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Store\r\n
+comment2.params=
+comment2.target=void\ makeVisible()
+comment2.text=\r\n\ makes\ the\ store\ visible\r\n\ @return\ void\r\n
+comment3.params=
+comment3.target=void\ makeInvisible()
+comment3.text=\r\n\ makes\ the\ store\ invisible\r\n\ @return\ void\r\n
+comment4.params=
+comment4.target=void\ resupply()
+comment4.text=\r\n\ reset\ the\ stash\ to\ the\ initial\ amount\r\n\ @return\ void\r\n
+comment5.params=
+comment5.target=int\ getStash()
+comment5.text=\r\n\ gives\ the\ stash\ amount\r\n\ @return\ int\r\n
+numComments=6
