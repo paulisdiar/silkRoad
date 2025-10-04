@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Random;
 
 /**
  * A triangle that can be manipulated and that draws itself on a canvas.
@@ -15,21 +16,46 @@ public class Triangle{
     private int width;
     private int xPosition;
     private int yPosition;
-    private String color;
+    private Color color;
     private boolean isVisible;
+    
+    private final Color myColor;//Ciclo 2: para guardar el color de la tienda al cambiarsele el color
 
     /**
-     * Create a new triangle at default position with default color.
+     * Create a new triangle at default position with a random color.
+     * @param int height
+     * @param int width
+     * @param int xPos
+     * @param int yPos
      */
-    public Triangle(){
-        height = 30;
-        width = 40;
-        xPosition = 140;
-        yPosition = 15;
-        color = "green";
+    public Triangle(int height, int width, int xPos, int yPos){
+        this.height = height;
+        this.width = width;
+        xPosition = xPos;
+        yPosition = yPos;
+        color = UtilColors.getRandomColor();
         isVisible = false;
+        myColor = color;
     }
-
+    
+    /**
+     * Create a new triangle at default position with the given color.
+     * @param int height
+     * @param int width
+     * @param int xPos
+     * @param int yPos
+     * @param Color color
+     */
+    public Triangle(int height, int width, int xPos, int yPos, Color color){
+        this.height = height;
+        this.width = width;
+        xPosition = xPos;
+        yPosition = yPos;
+        this.color = color;
+        isVisible = false;
+        myColor = color;
+    }
+    
     /**
      * Make this triangle visible. If it was already visible, do nothing.
      */
@@ -45,29 +71,88 @@ public class Triangle{
         erase();
         isVisible = false;
     }
-
+    
     /**
-     * Change the size to the new size
-     * @param newHeight the new height in pixels. newHeight must be >=0.
-     * @param newWidht the new width in pixels. newWidht must be >=0.
+     * moves the figure to a certain position
+     * @param int x
+     * @param int y
+     * @return void
      */
-    public void changeSize(int newHeight, int newWidth) {
-        erase();
-        height = newHeight;
-        width = newWidth;
-        draw();
+    public void teleport(int x, int y){
+        xPosition = x;
+        yPosition = y;
     }
     
     /**
-     * Change the color. 
-     * @param color the new color. Valid colors are "red", "yellow", "blue", "green",
-     * "magenta" and "black".
+     * Answers if tow triangles are equal
+     * @param Object object
+     * @return boolean
      */
-    public void changeColor(String newColor){
-        color = newColor;
-        draw();
+    @Override
+    public boolean equals(Object object){
+        if(this == object)return true;
+        if(!(object instanceof Triangle))return false;
+        Triangle t = (Triangle) object;
+        return height==t.getHeight() && width==t.getWidth() && xPosition==t.getXPosition() && yPosition==t.getYPosition() && color==t.getColor();
     }
-
+    
+    /**
+     * Gives the height of the triangle
+     * @return int
+     */
+    public int getHeight(){
+        return height;
+    }
+    
+    /**
+     * Gives the width of the triangle
+     * @return int
+     */
+    public int getWidth(){
+        return width;
+    }
+    
+    /**
+     * Gives the  xPosition of the triangle
+     * @return int
+     */
+    public int getXPosition(){
+        return xPosition;
+    }
+    
+    /**
+     * Gives the yPosition of the triangle
+     * @return int
+     */
+    public int getYPosition(){
+        return yPosition;
+    }
+    
+    /**
+     * Gives the color of the triangle
+     * @return Color
+     */
+    public Color getColor(){
+        return color;
+    }
+    
+    /**
+     * Sets the color of the triangle
+     * @param Color newColor
+     */
+    public void changeColor(Color newColor){
+        color = newColor;
+    }
+    
+    /**
+     * Gives the original color of the triangle
+     * @return Color
+     */
+    public Color getMyColor(){
+        return myColor;
+    }
+    
+    //Extras
     /*
      * Draw the triangle with current specifications on screen.
      */
@@ -89,16 +174,5 @@ public class Triangle{
             Canvas canvas = Canvas.getCanvas();
             canvas.erase(this);
         }
-    }
-    
-    /**
-     * moves the figure to a certain position
-     * @param int x
-     * @param int y
-     * @return void
-     */
-    public void teleport(int x, int y){
-        xPosition = x;
-        yPosition = y;
     }
 }

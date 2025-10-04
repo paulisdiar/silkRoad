@@ -19,21 +19,20 @@ public class Canvas{
     // is done on purpose to keep the interface and instance fields of the
     // shape objects in this project clean and simple for educational purposes.
 
-	private static Canvas canvasSingleton;
+    private static Canvas canvasSingleton;
 
-	/**
-	 * Factory method to get the canvas singleton object.
-	 */
-	public static Canvas getCanvas(){
-		if(canvasSingleton == null) {
-			canvasSingleton = new Canvas("BlueJ Shapes Demo", 300, 300, 
-										 Color.white);
-		}
-		canvasSingleton.setVisible(true);
-		return canvasSingleton;
-	}
+    /**
+     * Factory method to get the canvas singleton object.
+     */
+    public static Canvas getCanvas(){
+        if(canvasSingleton == null) {
+            canvasSingleton = new Canvas("BlueJ Shapes Demo", 1500, 1000, Color.white);
+        }
+        canvasSingleton.setVisible(true);
+        return canvasSingleton;
+    }
 
-	//  ----- instance part -----
+    //  ----- instance part -----
 
     private JFrame frame;
     private CanvasPane canvas;
@@ -92,11 +91,11 @@ public class Canvas{
      // Note: this is a slightly backwards way of maintaining the shape
      // objects. It is carefully designed to keep the visible shape interfaces
      // in this project clean and simple for educational purposes.
-    public void draw(Object referenceObject, String color, Shape shape){
-    	objects.remove(referenceObject);   // just in case it was already there
-    	objects.add(referenceObject);      // add at the end
-    	shapes.put(referenceObject, new ShapeDescription(shape, color));
-    	redraw();
+    public void draw(Object referenceObject, Color color, Shape shape){
+        objects.remove(referenceObject);   // just in case it was already there
+        objects.add(referenceObject);      // add at the end
+        shapes.put(referenceObject, new ShapeDescription(shape, color));
+        redraw();
     }
  
     /**
@@ -104,32 +103,17 @@ public class Canvas{
      * @param  referenceObject  the shape object to be erased 
      */
     public void erase(Object referenceObject){
-    	objects.remove(referenceObject);   // just in case it was already there
-    	shapes.remove(referenceObject);
-    	redraw();
+        objects.remove(referenceObject);   // just in case it was already there
+        shapes.remove(referenceObject);
+        redraw();
     }
 
     /**
      * Set the foreground colour of the Canvas.
-     * @param  newColour   the new colour for the foreground of the Canvas 
+     * @param  Color newColour   the new colour for the foreground of the Canvas 
      */
-    public void setForegroundColor(String colorString){
-		if(colorString.equals("red"))
-			graphic.setColor(Color.red);
-		else if(colorString.equals("black"))
-			graphic.setColor(Color.black);
-		else if(colorString.equals("blue"))
-			graphic.setColor(Color.blue);
-		else if(colorString.equals("yellow"))
-			graphic.setColor(Color.yellow);
-		else if(colorString.equals("green"))
-			graphic.setColor(Color.green);
-		else if(colorString.equals("magenta"))
-			graphic.setColor(Color.magenta);
-		else if(colorString.equals("white"))
-			graphic.setColor(Color.white);
-		else
-			graphic.setColor(Color.black);
+    public void setForegroundColor(Color newColor){
+        graphic.setColor(newColor);
     }
 
     /**
@@ -146,13 +130,13 @@ public class Canvas{
         }
     }
 
-	/**
-	 * Redraw ell shapes currently on the Canvas.
-	 */
-	private void redraw(){
-		erase();
-		for(Iterator i=objects.iterator(); i.hasNext(); ) {
-                       shapes.get(i.next()).draw(graphic);
+    /**
+     * Redraw all shapes currently on the Canvas.
+     */
+    private void redraw(){
+        erase();
+        for(Iterator i=objects.iterator(); i.hasNext(); ) {
+            shapes.get(i.next()).draw(graphic);
         }
         canvas.repaint();
     }
@@ -186,19 +170,19 @@ public class Canvas{
      * refresh the image drawn on it.
      */
     private class ShapeDescription{
-    	private Shape shape;
-    	private String colorString;
+        private Shape shape;
+        private Color colorAwt;
 
-		public ShapeDescription(Shape shape, String color){
-    		this.shape = shape;
-    		colorString = color;
-    	}
+        public ShapeDescription(Shape shape, Color color){
+            this.shape = shape;
+            colorAwt = color;
+        }
 
-		public void draw(Graphics2D graphic){
-			setForegroundColor(colorString);
-			graphic.draw(shape);
-			graphic.fill(shape);
-		}
+        public void draw(Graphics2D graphic){
+            setForegroundColor(colorAwt);
+            graphic.draw(shape);
+            graphic.fill(shape);
+        }
     }
 
 }
