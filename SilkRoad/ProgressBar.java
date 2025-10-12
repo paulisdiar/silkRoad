@@ -1,33 +1,29 @@
 
 /**
- * Write a description of class ProgressBar here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * show a progressBar in the SilkRoad simulation.
+ * @author Paula Díaz
+ * @author Juan Pablo Vélez
+ * @version 4
  */
-public class ProgressBar
-{
-    // instance variables - replace the example below with your own
-    private int x;
+public class ProgressBar {
 
-    /**
-     * Constructor for objects of class ProgressBar
-     */
-    public ProgressBar()
-    {
-        // initialise instance variables
-        x = 0;
+    private Rectangle background;   
+    private Rectangle fill;         
+    private int xPosition;
+    private int yPosition;
+
+    public ProgressBar(int xPosition, int yPosition) {
+        background= new Rectangle(20,20,20,20);
+        fill= new Rectangle(20,20,20,20);
+         
     }
 
     /**
-     * An example of a method - replace this comment with your own
+     * Update the progressBar
      * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
      */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public void update() {
+
     }
+
 }

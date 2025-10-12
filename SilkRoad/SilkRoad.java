@@ -21,6 +21,8 @@ public class SilkRoad{
     private ArrayList<Store> stores;
     private ArrayList<Robot> robots;
     private Road road;
+    private int[] dailyProfits;
+
     
     //Methods
     //CICLO 1
@@ -504,6 +506,9 @@ public class SilkRoad{
         }
     }
     
+    //CICLO 3
+    
+
     //Extras
     /**
      * Gets the length of the road.
