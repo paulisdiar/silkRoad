@@ -1,52 +1,48 @@
 import java.util.ArrayList;
 
 /**
- * Is the class in charge of the graphical representation of the robot and its behaviour.
+ * This is the class that defines the robot in the simulation
  * 
- * @author Paula Alejandra Díaz
+ * @author Paula Díaz
  * @author Juan Pablo Vélez
- * @version 3
+ * @version 4
  */
 public class Robot{
-    // Attributes
-    private final int initialLocation;
-    private final Block initialBlock;
-    private int actualLocation;
-    private Block block;
-    private int profit;
-    private boolean isVisible;
+    //Atributes
     private Rectangle head;
     private Rectangle body;
-    private ArrayList<Integer> profitsPerMove; //Ciclo 2
+    private final int initialLocation;
+    private int actualLocation;
+    private int profit;
+    private boolean isVisible;
+    private ArrayList<Integer> profitsPerMove;
     
     //Methods
     /**
      * Constructor for objects of class Robot
-     * @param int location
-     * @param Block block
-     * @return Robot
+     * @param int inLocation
+     * @param Block inBLock
      */
-    public Robot(int location, Block block){
-        initialLocation = location;
-        actualLocation = location;
-        this.block = block;
+    public Robot(int inLocation, Block inBlock){
+        initialLocation = inLocation;
+        actualLocation = inLocation;
         profit = 0;
         isVisible = false;
-        int[] coordinates = block.getCoordinates();
-        initialBlock = block;
-        profitsPerMove = new ArrayList<>(); //Ciclo 2
-        if(block.isHorizontal()){
-            head = new Rectangle(7, 7, coordinates[0]+5, coordinates[1]+7, UtilColors.getColor(UtilColors.awtColors.get(33)));
-            body = new Rectangle(10, 7, coordinates[0]+5, (coordinates[1]+7)+7);
-        }else if(!block.isHorizontal()){
-            head = new Rectangle(7, 7, coordinates[0]+5, coordinates[1]+20, UtilColors.getColor(UtilColors.awtColors.get(33)));
-            body = new Rectangle(10, 7, coordinates[0]+5, (coordinates[1]+7)+20);
+        profitsPerMove = new ArrayList<Integer>();
+        int x = inBlock.getXPosition();
+        int y = inBlock.getYPosition();
+        boolean isH = inBlock.isHorizontal();
+        if(isH){
+            head = new Rectangle(7, 7, x+5, y+7, UtilColors.getColor(UtilColors.awtColors.get(33)));
+            body = new Rectangle(10, 7, x+5, (y+7)+7);
+        }else if(!isH){
+            head = new Rectangle(7, 7, x+5, y+20, UtilColors.getColor(UtilColors.awtColors.get(33)));
+            body = new Rectangle(10, 7, x+5, (y+7)+20);
         }
     }
     
     /**
-     * Makes the robot visible
-     * @return void
+     * Activates the visual components of the robot
      */
     public void makeVisible(){
         isVisible = true;
@@ -55,8 +51,7 @@ public class Robot{
     }
     
     /**
-     * Makes the robot invisible
-     * @return void
+     * Activates the visual components of the robot
      */
     public void makeInvisible(){
         isVisible = false;
@@ -65,52 +60,43 @@ public class Robot{
     }
     
     /**
-     * Moves the robot to another location some meters
-     * @param Black block
+     * Moves the robot to the given block
+     * @param int location
+     * @param Block block
      */
-    public void teleportToBlock(Block block){
-        actualLocation = block.getLocation();
-        this.block = block;
-        int[] coordinates = block.getCoordinates();
+    public void teleportToBlock(int location, Block block){
+        actualLocation = location;
+        int x = block.getXPosition();
+        int y = block.getYPosition();
         if(block.isHorizontal()){
-            head.teleport(coordinates[0]+5, coordinates[1]+7);
-            body.teleport(coordinates[0]+5, (coordinates[1]+7)+7);
+            head.teleport(x+5, y+7);
+            body.teleport(x+5, (y+7)+7);
         }else if(!block.isHorizontal()){
-            head.teleport(coordinates[0]+5, coordinates[1]+20);
-            body.teleport(coordinates[0]+5, (coordinates[1]+7)+20);
+            head.teleport(x+5, y+20);
+            body.teleport(x+5, (y+7)+20);
         }
     }
     
     /**
-     * Steels the store in the block if it is posible
+     * The robot has stolen some tenges // meters must be positive
+     * @param int tenges
      * @param int meters
      */
-    public void steelStore(int meters){
-        Store store = block.getStore();
-        if(store != null && store.isFull()){
-            profit += store.getStash() - Math.abs(meters);
-            store.setFull(false);
-            store.wasStolen();
-            store.changeColor(false);
-            if(isVisible)store.makeVisible();//Ciclo 2
-            profitsPerMove.add(Integer.valueOf(store.getStash() - Math.abs(meters))); //Ciclo 2
-        }else if(store == null || (store != null && !store.isFull())){
-            profit -= Math.abs(meters);
-            profitsPerMove.add(Integer.valueOf(- Math.abs(meters))); //Ciclo 2
-        }
+    public void steelTenges(int tenges, int meters){
+        profit += tenges-meters;
+        profitsPerMove.add(Integer.valueOf(tenges-meters));
     }
     
     /**
-     * Moves the robot to the itss initial location
-     * @return void
+     * Gives the initial location of the robot
+     * @return int
      */
-    public void moveInitial(){
-        teleportToBlock(initialBlock);
-        initialBlock.addRobot(this);
+    public int getInitialLocation(){
+        return initialLocation;
     }
     
     /**
-     * Gives th actual location of the robot in the road
+     * Gives the actual location of the robot
      * @return int
      */
     public int getActualLocation(){
@@ -118,7 +104,7 @@ public class Robot{
     }
     
     /**
-     * Gives the total profit the robot has gained
+     * Gives the profit the robot has gained
      * @return int
      */
     public int getProfit(){
@@ -126,16 +112,7 @@ public class Robot{
     }
     
     /**
-     * Sets the block where the robot is in the road
-     * @param Block block
-     */
-    public void setBlock(Block block){
-        this.block = block;
-    }
-    
-    //Ciclo 2
-    /**
-     * Gives the list of profits gained by each move
+     * Gives the list of profit gained by the robot each move
      * @return ArrayList<Integer>
      */
     public ArrayList<Integer> getProfitsPerMove(){

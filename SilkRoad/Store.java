@@ -1,68 +1,92 @@
 /**
- * Is the class in charge of the graphical representation and behaviour of the stores in the silk road problem.
+ * Is the class that defines the store in the simulation
  * 
- * @author Paula Alejandra Díaz
  * @author Juan Pablo Vélez
- * @version 3
+ * @author Paula Díaz
+ * @version 4
  */
 public class Store{
-    // Attributes
-    private final int location;
-    private Block block;
-    private final int stash;
-    private boolean full;
-    private boolean isVisible;
+    //Atributes
     private Rectangle facade;
     private Triangle roof;
+    private final int location;
+    private final int stash;
     private int timesStolen; //Ciclo 2
+    private boolean full;
+    private boolean isVisible;
     
-    // Methods
+    //Methods
     /**
      * Constructor for objects of class Store
      * @param int location
      * @param int tenges
      * @param Block block
-     * @return Store
      */
     public Store(int location, int tenges, Block block){
         this.location = location;
-        this.block = block;
         stash = tenges;
+        timesStolen = 0; //Ciclo 2
         full = true;
         isVisible = false;
-        timesStolen = 0; //Ciclo 2
-        int[] coordinates = this.block.getCoordinates();
-        if(block.isHorizontal()){
-            facade = new Rectangle(10, 10, coordinates[0]+20, (coordinates[1]-10)+5);
-            roof = new Triangle(10, 10, (coordinates[0]+5)+20, (coordinates[1]-20)+5);
-        }else if(!block.isHorizontal()){
-            facade = new Rectangle(10, 10, coordinates[0]+27, (coordinates[1]-10)+35);
-            roof = new Triangle(10, 10, (coordinates[0]+5)+27, (coordinates[1]-20)+35);
+        int x = block.getXPosition();
+        int y = block.getYPosition();
+        boolean isH = block.isHorizontal();
+        if(isH){
+            facade = new Rectangle(10, 10, x+20, (y-10)+5);
+            roof = new Triangle(10, 10, (x+5)+20, (y-20)+5);
+        }else if(!isH){
+            facade = new Rectangle(10, 10, x+27, (y-10)+35);
+            roof = new Triangle(10, 10, (x+5)+27, (y-20)+35);
         }
     }
     
     /**
-     * Makes the store visible
-     * @return void
+     * Activates the components of the store
      */
     public void makeVisible(){
         isVisible = true;
-        facade.makeVisible();
         roof.makeVisible();
+        facade.makeVisible();
     }
     
     /**
-     * Makes the store invisible
-     * @return void
+     * Deactivates the components of the store
      */
     public void makeInvisible(){
         isVisible = false;
-        facade.makeInvisible();
         roof.makeInvisible();
+        facade.makeInvisible();
     }
     
     /**
-     * Gives the stash amount
+     * Gives the location of the store
+     * @return int
+     */
+    public int getLocation(){
+        return location;
+    }
+    
+    /**
+     * Answers if the store is full
+     * qreturn boolean
+     */
+    public boolean isFull(){
+        return full;
+    }
+    
+    /**
+     * Set the value of the full atribute
+     * @param boolean is
+     */
+    public void setFull(boolean is){
+        if(!is)timesStolen ++;
+        full = is;
+        changeColor(is);
+        if(isVisible)makeVisible();
+    }
+    
+    /**
+     * Gives the stash amount the stores has
      * @return int
      */
     public int getStash(){
@@ -70,86 +94,7 @@ public class Store{
     }
     
     /**
-     * Sets the block where the store is
-     * @param Block block
-     */
-    public void setBlock(Block block){
-        this.block = block;
-    }
-    
-    /**
-     * Answers if the store is full of tenges
-     * @return boolean
-     */
-    public boolean isFull(){
-        return full;
-    }
-    
-    /**
-     * Sets if the store is full or not
-     * @param boolean is
-     */
-    public void setFull(boolean is){
-        full = is;
-    }
-    
-    /**
-     * Gives the location of the store
-     * @retun int
-     */
-    public int getLocation(){
-        return location;
-    }
-    
-    //Ciclo 2
-    /**
-     * Answers if two stores are equal
-     * @param Object object
-     * @return boolean
-     */
-    @Override
-    public boolean equals(Object object){
-        if(this == object)return true;
-        if(!(object instanceof Store))return false;
-        Store store = (Store) object;
-        if(location!=store.getLocation() || !block.equals(store.getBlock()) || stash!=store.getStash() || full!=store.isFull() ||
-        !facade.equals(store.getFacade()) || !roof.equals(store.getRoof()))return false;
-        return true;
-    }
-    
-    /**
-     * Gives the block where the store is
-     * @return Block
-     */
-    public Block getBlock(){
-        return block;
-    }
-    
-    /**
-     * Gives the facade of the store
-     * @return Rectangle
-     */
-    public Rectangle getFacade(){
-        return facade;
-    }
-    
-    /**
-     * Gives the roof of the store
-     * @return Triangle
-     */
-    public Triangle getRoof(){
-        return roof;
-    }
-    
-    /**
-     * Increses the times the store has been Stolen
-     */
-    public void wasStolen(){
-        timesStolen ++;
-    }
-    
-    /**
-     * Gives the number of times the store has been stolen
+     * Gives the times the store has been stolen
      * @return int
      */
     public int getTimesStolen(){
@@ -157,11 +102,11 @@ public class Store{
     }
     
     /**
-     * Changes the color of the store based on if it is full or not
-     * @param boolean isFull
+     * changes the color of the store based on the atribute full
+     * @param boolean full
      */
-    public void changeColor(boolean isFull){
-        if(isFull){
+    private void changeColor(boolean full){
+        if(full){
             facade.changeColor(facade.getMyColor());
             roof.changeColor(roof.getMyColor());
         }else{

@@ -11,19 +11,17 @@ import java.awt.geom.*;
 public class Circle{
 
     public static final double PI=3.1416;
-    //Atributes
     private int diameter;
     private int xPosition;
     private int yPosition;
     private Color color;
     private boolean isVisible;
     
-    //Methods
     public Circle(){
         diameter = 30;
         xPosition = 20;
         yPosition = 15;
-        //falta inicializar color
+        color = Color.BLUE;
         isVisible = false;
     }
     
@@ -37,7 +35,6 @@ public class Circle{
         isVisible = false;
     }
 
-    //Extras
     private void draw(){
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();

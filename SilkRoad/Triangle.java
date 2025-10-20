@@ -87,8 +87,8 @@ public class Triangle{
      * Answers if tow triangles are equal
      * @param Object object
      * @return boolean
+     * @override
      */
-    @Override
     public boolean equals(Object object){
         if(this == object)return true;
         if(!(object instanceof Triangle))return false;
@@ -152,7 +152,7 @@ public class Triangle{
         return myColor;
     }
     
-    //Extras
+    //Extra
     /*
      * Draw the triangle with current specifications on screen.
      */

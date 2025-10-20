@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=UtilColors
-comment0.text=\r\n\ This\ class\ is\ in\ charge\ of\ the\ color.\r\n\ \r\n\ @author\ Paula\ D\u00EDaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 3\r\n
+comment0.text=\r\n\ This\ class\ is\ in\ charge\ of\ the\ color.\r\n\ \r\n\ @author\ Paula\ D\u00EDaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 4\r\n
 comment1.params=
 comment1.target=java.awt.Color\ getRandomColor()
 comment1.text=\r\n\ Gives\ a\ random\ color\ from\ the\ AwtColors\ list\r\n

@@ -1,246 +1,354 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 /**
- * DOPO versión of the silk road problem with a graphical representation.
+ * Initial project of DOPO. SilkRoad simulator.
  * 
- * @author Paula Alejandra Díaz
  * @author Juan Pablo Vélez
- * @version 3
+ * @author Paula Díaz
+ * @version 4
  */
 public class SilkRoad{
-    //Attributes
+    //Atributes
     private final int length;
-    private int totalProfit;
     private final int days;
     private int actualDay;
     private boolean isVisible;
     private boolean lastDone;
-    private ArrayList<Store> stores;
+    private ArrayList<Block> road;
     private ArrayList<Robot> robots;
-    private Road road;
+    private ArrayList<Store> stores;
     private int[] dailyProfits;
-
+    private int[][] elements;
+    private Bar progressBar;
     
-    //Methods
-    //CICLO 1
-    //MiniCiclo 1
+    //Ciclo 1
+    //Miniciclo 1
     /**
-     * Creates the silk road problem simulator
-     * @param int length
-     * @return SilkRoad
+     * Constructor for objects of class SilkRoad
      */
-    public SilkRoad(int length){
-        //days y actual days los dejaremos para después.
-        days = 0;
-        actualDay = 0;
-        //para después.
-        
+    public SilkRoad(int length){        
         this.length = Math.abs(length);
-        totalProfit = 0;
         isVisible = false;
         lastDone = true;
-        stores = new ArrayList(Collections.nCopies(Math.abs(length), null));
-        robots = new ArrayList();
-        road = new Road(Math.abs(length));
+        stores = new ArrayList<Store>();
+        robots = new ArrayList<Robot>();
+        road = new ArrayList<Block>();
+        for(int i = 0; i < this.length; i++){
+            int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
+            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1], i+1);
+            road.add(newBlock);
+        }
+        progressBar = new Bar();
+        
+        //Los demás atributos no son necesarios, el único es days y actualDay por ser final y facilidad
+        days = 0;
+        actualDay = 0;
     }
     
-    //MiniCiclo 2
     /**
-     * Adds a new store to the game if its posible
+     * Activates the visual components of the simulator
+     */
+    public void makeVisible(){
+        isVisible = true;
+        for(Block b : road){
+            b.makeVisible();
+        }
+        
+        for(Store s : stores){
+            s.makeVisible();
+        }
+        
+        for(Robot r : robots){
+            r.makeVisible();
+        }
+        progressBar.makeVisible();
+    }
+    
+    /**
+     * Deactivates the visual components of the simulator
+     */
+    public void makeInvisible(){
+        isVisible = true;
+        for(Block b : road){
+            b.makeInvisible();
+        }
+        
+        for(Store s : stores){
+            s.makeInvisible();
+        }
+        
+        for(Robot r : robots){
+            r.makeInvisible();
+        }
+        progressBar.makeInvisible();
+    }
+    
+    //Miniciclo 2
+    /**
+     * Adds a store in the given location with the given tenges
      * @param int location
      * @param int tenges
      */
     public void placeStore(int location, int tenges){
-        if(road.in(location) && stores.get(location-1) == null && tenges > 0){
-            Store store = road.placeStore(location, tenges);
-            stores.set(location-1, store);
-            if(isVisible) store.makeVisible();
-            lastDone = true;
-        }else if(!road.in(location) || stores.get(location-1) != null || tenges <= 0){
+        if((0 <= location-1 && location-1 < length) && tenges >= 0){
+            Block b = road.get(location-1);
+            if(!b.hasStore()){
+                Store newStore = new Store(location, tenges, b);
+                if(isVisible)newStore.makeVisible();
+                stores.add(newStore);
+                b.setHasStore(true);
+                lastDone = true;
+                progressBar.updateTotal(SRCalculator.determineTotal(stores));
+                progressBar.updateProgress(profit());
+            }else{
+                lastDone = false;
+                if(isVisible)JOptionPane.showMessageDialog(null, "Ya existe una tienda en la ubicación.");
+            }
+        }else{
             lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "Fue imposible ubicar la tienda.");
+            if(isVisible){
+                if(!(0 <= location-1 && location-1 < length)){
+                    JOptionPane.showMessageDialog(null, "La ubicación no es válida");
+                }else if(tenges < 0){
+                    JOptionPane.showMessageDialog(null, "no puede haber una cantidad negativa de tenges.");
+                }
+            }
         }
     }
     
     /**
-     * Deletes a store from the game if its posible
-     * @param int location
-     * @return void
+     * Removes a store in thegiven location
+     * @param location
      */
     public void removeStore(int location){
-        if(road.in(location) && stores.get(location-1) != null){
-            road.removeStore(location);
-            if(isVisible) stores.get(location-1).makeInvisible();
-            stores.set(location-1, null);
-            lastDone = true;
-        }else if(!road.in(location) || stores.get(location-1) == null){
+        if(0 <= location-1 && location-1 < length){
+            Block b = road.get(location-1);
+            if(b.hasStore()){
+                b.setHasStore(false);
+                Store remove = findStore(location);
+                if(isVisible)remove.makeInvisible();
+                stores.remove(remove);
+                lastDone = true;
+                progressBar.updateTotal(SRCalculator.determineTotal(stores));
+                progressBar.updateProgress(profit());
+            }else{
+                lastDone = false;
+                if(isVisible)JOptionPane.showMessageDialog(null, "No hay tienda que eliminar.");
+            }
+        }else{
             lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "Fue imposible eliminar la tienda.");
+            if(isVisible)JOptionPane.showMessageDialog(null, "Ubicación inválida");
         }
     }
     
-    //MiniCiclo 3
+    //Miniciclo 3
     /**
-     * Adds a new robot to the game if its posible
-     * @param int location
-     * @return void
+     * Adds a robot in the Given location
+     * @int location
      */
     public void placeRobot(int location){
-        if(road.in(location)){
-            Robot robot = road.placeRobot(location);
-            robots.add(robot);
-            if(isVisible) robot.makeVisible();
+        if(0 <= location-1 && location-1 < length){
+            Block b = road.get(location-1);
+            Robot newRobot = new Robot(location, b);
+            b.addRobot(newRobot);
+            robots.add(newRobot);
+            if(isVisible)newRobot.makeVisible();
             lastDone = true;
-        }else if(!road.in(location)){
+        }else{
             lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "Fue imposible ubicar el robot.");
+            if(isVisible)JOptionPane.showMessageDialog(null, "Ubicación inválida");
         }
     }
     
     /**
-     * Deletes a robot from the game if its posible
+     * Removes a robot in the given location
      * @param int location
-     * @return void
      */
     public void removeRobot(int location){
-        if(road.in(location)){
-            Robot robot = road.removeRobot(location);
-            if(robot != null){
-                robots.remove(robot);
+        if(0 <= location-1 && location-1 < length){
+            Block b = road.get(location-1);
+            if(b.hasRobots()){
+                Robot remove = b.getFirstRobot();
+                b.removeRobot(remove);
+                robots.remove(remove);
+                if(isVisible)remove.makeInvisible();
                 lastDone = true;
             }else{
                 lastDone = false;
-                if(isVisible)JOptionPane.showMessageDialog(null, "Fue imposible eliminar el robot.");
+                if(isVisible)JOptionPane.showMessageDialog(null, "No hay robot para borrar.");
             }
-        }else if(!road.in(location)){
+        }else{
             lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "Fue imposible eliminar el robot.");
+            if(isVisible)JOptionPane.showMessageDialog(null, "Ubicación inválida");
         }
     }
     
-    //MiniCiclo 4
+    //Miniciclo 4
     /**
-     * Moves a robot from a given location a certain amount of meters
+     * Moves a robot some meter from the given location
      * @param int location
      * @param int meters
-     * @return void
      */
-    public void moveRobot(int location, int meters) throws InterruptedException{
-        if(road.in(location)){
-            lastDone = road.moveRobot(location, meters);
-        }else if(!road.in(location)){
+    public void moveRobot(int location, int meters){
+        if(0 <= location-1 && location-1 < length){
+            Block b = road.get(location-1);
+            if(b.hasRobots()){
+                if(0 < location+meters && location+meters <= length){
+                    int direction = (meters > 0) ? +1 : -1;
+                    int steps = Math.abs(meters);
+                    int position = location-1;
+                    Robot mover = b.getFirstRobot();
+                    b.removeRobot(mover);
+                    while(steps > 0){
+                        position += direction;
+                        mover.teleportToBlock(position+1, road.get(position));
+                        if(isVisible)mover.makeVisible();
+                        try{
+                            Thread.sleep(2000);
+                        }catch(InterruptedException e){}
+                        if(isVisible)mover.makeInvisible();
+                        steps --;
+                    }
+                    if(isVisible)mover.makeVisible();
+                    Block finalB = road.get(position);
+                    finalB.addRobot(mover);
+                    Store s = findStore(position+1);
+                    if(s != null && s.isFull()){
+                        s.setFull(false);
+                        mover.steelTenges(s.getStash(), Math.abs(meters));
+                    }else if(s == null || !s.isFull()){
+                        mover.steelTenges(0, Math.abs(meters));
+                    }
+                    progressBar.updateProgress(profit());
+                }else{
+                    lastDone = false;
+                    if(isVisible)JOptionPane.showMessageDialog(null, "El movimiento supera los limites de la ruta.");
+                }
+            }else{
+                lastDone = false;
+                if(isVisible)JOptionPane.showMessageDialog(null, "No hay robot para mover.");
+            }
+        }else{
             lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "Ubicación inválida");
         }
-        if(isVisible && lastDone == false)JOptionPane.showMessageDialog(null, "No se pudo realizar el movimiento del robot.");
     }
     
+    //Miniciclo 5
     /**
-     * Resupply all stores stashes
+     * Set all stores full again
      */
     public void resupplyStores(){
-        if(countStores() > 0){
+        if(stores.size() > 0){
             for(Store s : stores){
-                if(s != null){
-                    s.setFull(true);
-                    s.changeColor(true);//Ciclo 2
-                    if(isVisible)s.makeVisible();
-                }
-            }
-            lastDone = true;
-        }else if(countStores() == 0){
-            lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "No hay tiendas a las cuales reabastecer.");
-        }
-    }
-    
-    /**
-     * Returns all robots to their initial location
-     */
-    public void returnRobots(){
-        if(!robots.isEmpty()){
-            for(Robot r : robots){
-                if(isVisible) r.makeInvisible();
-                r.moveInitial();
-                if(isVisible) r.makeVisible();
+                  if(!s.isFull())s.setFull(true);
             }
             lastDone = true;
         }else{
             lastDone = false;
-            if(isVisible)JOptionPane.showMessageDialog(null, "No hay robots a los cuales devolver.");
         }
     }
     
     /**
-     * Set all stores to full and the robots to their initial location
+     * Takes all robots back to their initial location
+     */
+    public void returnRobots(){
+        if(robots.size() > 0){
+            for(Robot r : robots){
+                int inLocation = r.getInitialLocation();
+                int acLocation = r.getActualLocation();
+                if(inLocation != acLocation){
+                    road.get(acLocation-1).removeRobot(r);
+                    Block inBlock = road.get(inLocation-1);
+                    r.teleportToBlock(inLocation, inBlock);
+                    road.get(inLocation-1).addRobot(r);
+                    if(isVisible)r.makeVisible();
+                }
+            }
+            lastDone = true;
+        }else{
+            lastDone = false;
+        }
+    }
+    
+    /**
+     * Set all stores full again and takes all robots back to thier initial location
+     * Also add the elemets depending on the day. (increases actualDay)
      */
     public void reboot(){
-        for(Robot r : robots){
-            r.moveInitial();
-            if(isVisible) r.makeVisible();
-        }
-        
-        if(countStores() > 0){
+        //refill stores
+        if(stores.size() > 0){
             for(Store s : stores){
-                if(s != null){
-                    s.setFull(true);
-                    s.changeColor(true);//Ciclo 2
-                    if(isVisible)s.makeVisible();
+                  if(!s.isFull())s.setFull(true);
+            }
+            lastDone = true;
+        }
+        //takes robots back
+        if(robots.size() > 0){
+            for(Robot r : robots){
+                int inLocation = r.getInitialLocation();
+                int acLocation = r.getActualLocation();
+                if(inLocation != acLocation){
+                    road.get(acLocation-1).removeRobot(r);
+                    Block inBlock = road.get(inLocation-1);
+                    r.teleportToBlock(inLocation, inBlock);
+                    road.get(inLocation-1).addRobot(r);
+                    if(isVisible)r.makeVisible();
                 }
             }
         }
-        actualDay ++;
+        
+        //Ciclo 2. Agruega los elementos del día en el que va la simulación
+        if(actualDay < days){
+            actualDay ++;
+            if(elements[actualDay][0] == 1){
+                placeRobot(elements[actualDay][1]);
+                if(isVisible){
+                    Robot newElement = road.get(elements[actualDay][1]-1).getLastRobot();
+                    newElement.makeVisible();
+                }
+            }else if(elements[actualDay][0] == 2){
+                placeStore(elements[actualDay][1], elements[actualDay][2]);
+                if(isVisible){
+                    Store newElement = findStore(elements[actualDay][1]);
+                    newElement.makeVisible();
+                }
+            }
+        }
     }
     
-    //MiniCiclo 5
+    //Miniciclo 6
     /**
-     * Answers the total profit
+     * Answers the total profit gained by robtos
      * @return int
      */
     public int profit(){
-        int count = 0;
+        int total = 0;
         for(Robot r : robots){
-            count += r.getProfit();
+            total += r.getProfit();
         }
-        totalProfit = count;
-        return totalProfit;
+        return total;
     }
     
     /**
-     * Gives a list of stores by their location and stashes
+     * Gives a list of stores ordered by location and tenges (from least to most)
      * @return int[][]
      */
     public int[][] stores(){
-        int numberStores = countStores();
-        int[][] answer = new int[numberStores][2];
+        int[][] answer = new int[stores.size()][2];
         int i = 0;
         for(Store s : stores){
-            if(s != null){
-                answer[i][0] = s.getLocation();
-                answer[i][1] = s.getStash();
-                i++;
-            }
+            answer[i][0] = s.getLocation();
+            answer[i][1] = s.getStash();
+            i++;
         }
-        return answer;
+        return SRCalculator.orderArray(answer);
     }
     
     /**
-     * Counts the number of stores in the road
-     * @return int
-     */
-    public int countStores(){
-        int count = 0;
-        for(Store s  : stores){
-            if(s != null) count++;
-        }
-        return count;
-    }
-    
-    /**
-     * Gives a list of robots ordered by their location and profit
-     * @return in[][]
+     * Givesa list of robots ordered by location and profit (from least to most)
+     * @return int[][]
      */
     public int[][] robots(){
         int[][] answer = new int[robots.size()][2];
@@ -250,60 +358,10 @@ public class SilkRoad{
             answer[i][1] = r.getProfit();
             i++;
         }
-        orderArray(answer);
-        return answer;
+        return SRCalculator.orderArray(answer);
     }
     
-    /**
-     * Orders the given array by column, from smallest to biggest
-     * @param int[][] array
-     * @return int[][]
-     */
-    private int[][] orderArray(int[][] array){
-        Arrays.sort(array, (a, b) ->{
-            if (a[0] != b[0]) {
-                return Integer.compare(a[0], b[0]); // columna 0
-            } else {
-                return Integer.compare(a[1], b[1]); // columna 1
-            }
-        });
-        return array;
-    }
-    
-    //MiniCiclo 6
-    /**
-     * Makes the game visible in the canvas
-     * @return void
-     */
-    public void makeVisible(){
-        road.makeVisible();
-        for(Store s : stores){
-            if(s != null) s.makeVisible();
-        }
-        
-        for(Robot r : robots){
-            r.makeVisible();
-        }
-        isVisible = true;
-    }
-    
-    /**
-     * Makes the game invisible in the canvas
-     * @return void
-     */
-    public void makeInvisible(){
-        road.makeInvisible();
-        for(Store s : stores){
-            if(s != null) s.makeInvisible();
-        }
-        
-        for(Robot r : robots){
-            r.makeInvisible();
-        }
-        isVisible = false;
-    }
-    
-    //MiniCiclo 7
+    //Miniciclo 7
     /**
      * Ends the simulator
      * @return void
@@ -320,257 +378,168 @@ public class SilkRoad{
         return lastDone;
     }
     
-    //CICLO 2
-    
-    //MiniCiclo 2
+    //Ciclo2
+    //Miniciclo 1
     /**
-     * Creates a silkRoad simulator with the incoming data from the ICPC 2024 problem J.
+     * Constructor for objects of class SilkRoad. In this case it will have elements that will be added day by day
      * @param int days
      * @param int[][] elements
-     * @return SilkRoad
      */
     public SilkRoad(int days, int[][] elements){
+        //Los atributos necesarios para el paso de los días
         this.days = days;
         actualDay = 0;
-        int l = searchLength(elements);
-        length = l;
-        totalProfit = 0;
+        int length = SRCalculator.determineLength(elements);
+        
+        //Primer constructor
+        this.length = Math.abs(length);
         isVisible = false;
         lastDone = true;
-        stores = new ArrayList(Collections.nCopies(length, null));
-        robots = new ArrayList();
-        road = new Road(length);
-    }
-    
-    /**
-     * Searches the length of the silkRoad with the ICPC data
-     * @param int[][] array
-     * @return int
-     */
-    public int searchLength(int[][] array){
-        int l = array.length;
-        int answer = array[0][1];
-        for(int i = 1; i < l; i++){
-            if(answer < array[i][1])answer = array[i][1];
+        stores = new ArrayList<Store>();
+        robots = new ArrayList<Robot>();
+        road = new ArrayList<Block>();
+        for(int i = 0; i < length; i++){
+            int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
+            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1], i+1);
+            road.add(newBlock);
         }
-        return answer;
+        progressBar = new Bar();
+        
+        //Adicionamos el elemento del primer día
+        if(elements[actualDay][0] == 1){
+            placeRobot(elements[actualDay][1]);
+        }else if(elements[actualDay][0] == 2){
+            placeStore(elements[actualDay][1], elements[actualDay][2]);
+        }
     }
     
-    //MiniCiclo 3
+    //Miniciclo 2
     /**
-     * Moves robots deciding the best move (maximizing profit)
+     * Moves the robots based on maximazing the total profit
      */
     public void moveRobots(){
-        int robotsAmount = robots.size();
-        int storesAmount = countStores();
-        ArrayList<Robot> copyRobots = new ArrayList<>(robots);
-        if(robotsAmount > 0 && storesAmount > 0){
-            for(Store s : stores){
-                if(s != null && s.isFull() && copyRobots.size() > 0){
-                    int x1 = s.getLocation();
-                    Integer[][] profits = new Integer[copyRobots.size()][];
-                    for(int i = 0; i < copyRobots.size(); i++){
-                        int x2 = copyRobots.get(i).getActualLocation();
-                        int meters = x1 - x2;
-                        profits[i] = new Integer[]{Integer.valueOf(s.getStash() - Math.abs(meters)), Integer.valueOf(meters)};
-                    }
-                    int robotIndex = searchMaxProfit(profits);
-                    try{
-                        moveRobot(copyRobots.get(robotIndex).getActualLocation(), profits[robotIndex][1]);
-                    }catch(InterruptedException e){}
-                    copyRobots.remove(robotIndex);
-                }
+        if(stores.size() > 0 && robots.size() > 0){
+            ArrayList<int[]> listMovements = SRCalculator.determineMoves(robots, stores);
+            for(int[] move : listMovements){
+                moveRobot(move[0], move[1]);
             }
             lastDone = true;
         }else{
             lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "No hay robots o tiendas.");
         }
     }
     
+    //Miniciclo 3
     /**
-     * Searches the max Profit and gives the index of the robot who has it
-     * @param Integer[][]
-     * @return int
-     */
-    private int searchMaxProfit(Integer[][] profits){
-        int maxIndex = 0;
-        Integer max = profits[0][0]; // el primer profit
-        for(int i = 1; i < profits.length; i++){
-            if(profits[i][0].compareTo(max) > 0){
-                max = profits[i][0];
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-    }
-    
-    //MiniCiclo 4
-    /**
-     * Gives a list of the store location and the times it has been stolen
-     * @retun int[][]
+     * Gives a list of stores ordered by location and times its has been stolen (from least to most)
+     * @return int[][]
      */
     public int[][] emptiedStores(){
-        int numberStores = countStores();
-        if(numberStores > 0){
-            int[][] answer = new int[numberStores][2];
+        if(!stores.isEmpty()){
+            int[][] answer = new int[stores.size()][2];
             int i = 0;
             for(Store s : stores){
-                if(s != null){
-                    answer[i][0] = s.getLocation();
-                    answer[i][1] = s.getTimesStolen();
-                    i++;
-                }
+                answer[i][0] = s.getLocation();
+                answer[i][1] = s.getTimesStolen();
+                i++;
             }
-            return answer;
+            return SRCalculator.orderArray(answer);
         }
         return null;
     }
     
-    //MiniCiclo 5
+    //Miniciclo 4
     /**
-     * gives a list of the robots location and the profit they have earned in each move. If
-     * the robot hasn´t move it will show a zero. Also, makes the robot with the most profit
-     * stand out
+     * Gives a list of robots orderes by location and profits they have gained in each move (from least to most)
      * @return int[][]
      */
     public int[][] profitPerMove(){
-        if(robots.size() > 0){
-            int maxTimesStole = getMaxTimesStole();
-            int[][] answer = new int[robots.size()][maxTimesStole + 1];
+        if(!robots.isEmpty()){
+            int maxMovements = SRCalculator.determineMaxMovements(robots);
+            int[][] answer = new int[robots.size()][maxMovements+1];
             int i = 0;
             for(Robot r : robots){
                 answer[i][0] = r.getActualLocation();
                 ArrayList<Integer> robotProfits = r.getProfitsPerMove();
-                for(int j = 1; j <= maxTimesStole; j++){
-                    if (j-1 < robotProfits.size()) {
+                for(int j = 1; j <= maxMovements; j++){
+                    if(j-1 < robotProfits.size()){
                         answer[i][j] = robotProfits.get(j-1).intValue();
-                    } else {
-                        answer[i][j] = 0; // si no hay movimiento, cero
+                    }else{
+                        answer[i][j] = 0;
                     }
-                }
-                i++;
+               }
             }
             if(isVisible)makeStandOut();
-            return orderArray2(answer);
+            return SRCalculator.orderArray(answer);
         }
         return null;
     }
     
     /**
-     * Gives the most times a robot has moved trying to get a profit.
-     * @return int
-     */
-    private int getMaxTimesStole(){
-        int max = robots.get(0).getProfitsPerMove().size();
-        for(int i = 1; i < robots.size(); i++){
-            int aux = robots.get(i).getProfitsPerMove().size();
-            max = (max > aux) ? max: aux;
-        }
-        return max;
-    }
-    
-    /**
-     * Gives the array ordered using the next standar: from least to most by column
-     * @param int[][]
-     * @return int[][]
-     */
-    private int[][] orderArray2(int[][] array){
-        Arrays.sort(array, (a, b) -> {
-            for(int i = 0; i < a.length; i++){
-                if (a[i] != b[i])return Integer.compare(a[i], b[i]);
-            }
-            return 0;
-        });
-        return array;
-    }
-    
-    /**
-     * Makes the robot with more profit stand out
+     * Makes the robot with the most profit gained stand out in the simulation
      */
     private void makeStandOut(){
-        //busca al robot con mayor profit
-        Robot maxProfitRobot = robots.get(0);
-        for(int i = 1; i < robots.size(); i++){
-            if(maxProfitRobot.getProfit() < robots.get(i).getProfit())maxProfitRobot = robots.get(i);
+        Robot theOne = SRCalculator.searchMaxProfitRobot(robots);
+        //Desactivamos los robots
+        for(Robot r : robots){
+            r.makeInvisible();
         }
-        //resalta al robot con mayor profit
-        for(int t = 0; t < 10; t++){
-            maxProfitRobot.makeInvisible();
+        //Lo hacemos resaltar
+        for(int t = 0; t < 5; t++){
+            theOne.makeInvisible();
             try{
-                Thread.sleep(2000);
+                Thread.sleep(500);
             }catch(InterruptedException e){}
-            maxProfitRobot.makeVisible();
+            theOne.makeVisible();
             try{
-                Thread.sleep(2000);
+                Thread.sleep(500);
             }catch(InterruptedException e){}
+        }
+        //Activamos los robots
+        for(Robot r : robots){
+            r.makeVisible();
         }
     }
     
-    //CICLO 3
-    
-
-    //Extras
+    //Extra
     /**
-     * Gets the length of the road.
-     * @return int
+     * Finds the store in the given location. It must be previuosly guaranted the there is a store
+     * @param int location
+     * @return Store
      */
+    private Store findStore(int location){
+        for(Store s : stores){
+            if(s.getLocation() == location)return s;
+        }
+        return null;
+    }
+    
     public int getLength(){
         return length;
     }
     
-    /**
-     * Gets the total profit earned
-     * @return int
-     */
-    public int getTotalProfit(){
-        return totalProfit;
-    }
-    
-    /**
-     * Answers if the simulator is visible
-     * @return boolean
-     */
-    public boolean isVisible(){
-        return isVisible;
-    }
-    
-    /**
-     * Gets the list of stores
-     * @return ArrayList<Store>
-     */
-    public ArrayList<Store> getStores(){
-        return stores;
-    }
-    
-    /**
-     * Gets the list of robots
-     * @return ArrayList<Robot>
-     */
-    public ArrayList<Robot> getRobots(){
-       return robots; 
-    }
-    
-    /**
-     * Gives the road
-     * @return Road
-     */
-    public Road getRoad(){
-        return road;
-    }
-    
-    /**
-     * Gives the days the simulator will go on
-     * @return int
-     */
     public int getDays(){
         return days;
     }
     
-    /**
-     * Gives the actual day of the simulator
-     * @return int
-     */
     public int getActualDay(){
         return actualDay;
+    }
+    
+    public ArrayList<Robot> getRobots(){
+        return robots;
+    }
+    
+    public ArrayList<Store> getStores(){
+        return stores;
+    }
+    
+    public Bar getProgressBar(){
+        return progressBar;
+    }
+    
+    public ArrayList<Block> getRoad(){
+        return road;
     }
 }

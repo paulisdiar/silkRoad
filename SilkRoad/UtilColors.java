@@ -8,7 +8,7 @@ import java.util.Random;
  * 
  * @author Paula Díaz
  * @author Juan Pablo Vélez
- * @version 3
+ * @version 4
  */
 public class UtilColors{
     //Atributes

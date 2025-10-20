@@ -26,7 +26,8 @@ public class Canvas{
      */
     public static Canvas getCanvas(){
         if(canvasSingleton == null) {
-            canvasSingleton = new Canvas("BlueJ Shapes Demo", 1500, 1000, Color.white);
+            canvasSingleton = new Canvas("BlueJ Shapes Demo", 1500, 1000, 
+                                         Color.white);
         }
         canvasSingleton.setVisible(true);
         return canvasSingleton;
@@ -110,7 +111,7 @@ public class Canvas{
 
     /**
      * Set the foreground colour of the Canvas.
-     * @param  Color newColour   the new colour for the foreground of the Canvas 
+     * @param  newColour   the new colour for the foreground of the Canvas 
      */
     public void setForegroundColor(Color newColor){
         graphic.setColor(newColor);
@@ -131,12 +132,12 @@ public class Canvas{
     }
 
     /**
-     * Redraw all shapes currently on the Canvas.
+     * Redraw ell shapes currently on the Canvas.
      */
     private void redraw(){
         erase();
         for(Iterator i=objects.iterator(); i.hasNext(); ) {
-            shapes.get(i.next()).draw(graphic);
+                       shapes.get(i.next()).draw(graphic);
         }
         canvas.repaint();
     }

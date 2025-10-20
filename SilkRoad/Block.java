@@ -5,20 +5,19 @@ import java.util.ArrayList;
  * 
  * @author Paula Díaz
  * @author Juan Pablo Vélez
- * @version 3
+ * @version 4
  */
 public class Block{
     //Atributes
     private Rectangle sideWalk;
     private Rectangle street;
     private Rectangle mark;
-    private Store store;
-    private ArrayList<Robot> robots;
     private final boolean isHorizontal;
     private boolean isVisible;
+    private boolean hasStore;
     private final int xPosition;
     private final int yPosition;
-    private final int location;
+    private ArrayList<Robot> robots;
     
     //Methods
     /**
@@ -30,13 +29,12 @@ public class Block{
      * @return Block
      */
     public Block(boolean isHorizontal, int xPos, int yPos, int location){
-        store = null;
         this.isHorizontal = isHorizontal;
         xPosition = xPos;
         yPosition = yPos;
         isVisible = false;
-        robots = new ArrayList();
-        this.location = location;
+        hasStore = false;
+        robots = new ArrayList<Robot>();
         if(isHorizontal == true){
             sideWalk = new Rectangle(5, 45, xPos, yPos, UtilColors.getColor(UtilColors.awtColors.get(35)));
             street = new Rectangle(30, 45, xPos, yPos+5, UtilColors.getColor(UtilColors.awtColors.get(34)));
@@ -46,32 +44,6 @@ public class Block{
             street = new Rectangle(45, 25, xPos, yPos, UtilColors.getColor(UtilColors.awtColors.get(34)));
             mark = new Rectangle(8, 2, xPos+12, yPos+18, UtilColors.getColor(UtilColors.awtColors.get(9)));
         }
-    }
-    
-    /**
-     * Create a new bot and sets it in the canvas
-     * @param int location
-     * @return Robot
-     */
-    public Robot placeRobot(int location){
-        Robot robot = new Robot(location, this);
-        robots.add(robot);
-        return robot;
-    }
-    
-    /**
-     * Removes a robot if posible. Also if not posible returns null
-     * @return Robot
-     */
-    public Robot removeRobot(){
-        if(robots.size() > 0){
-            Robot robot = robots.get(0);
-            if(isVisible) robot.makeInvisible();
-            robot.setBlock(null);
-            robots.remove(0);
-            return robot;
-        }
-        return null;
     }
     
     /**
@@ -95,132 +67,6 @@ public class Block{
     }
     
     /**
-     * Gives the coordinates in the canvas of the block
-     * @return int[]
-     */
-    public int[] getCoordinates(){
-        int[] coordinates = new int[2];
-        coordinates[0] = xPosition;
-        coordinates[1] = yPosition;
-        return coordinates;
-    }
-    
-    /**
-     * Set the store of the block
-     * @param Store store
-     */
-    public void setStore(Store store){
-        this.store = store;
-    }
-    
-    /**
-     * Answers if the block is horzontal
-     * @return boolean
-     */
-    public boolean isHorizontal(){
-        return isHorizontal;
-    }
-    
-    /**
-     * Gives the store of the block
-     * @return Store
-     */
-    public Store getStore(){
-        return store;
-    }
-    
-    /**
-     * Gives the first robot in the block
-     * @return Robot
-     */
-    public Robot getRobot(){
-        if(robots.size() > 0) return robots.get(0);
-        return null;
-    }
-    
-    /**
-     * Gives the location of the block in the road
-     * @return int
-     */
-    public int getLocation(){
-        return location;
-    }
-    
-    /**
-     * Removes the given robot
-     * @param Robot robot
-     */
-    public void deleteRobot(Robot robot){
-        robots.remove(robot);
-    }
-    
-    /**
-     * Adds the Robot to the block
-     * @param Robot robot
-     */
-    public void addRobot(Robot robot){
-        robots.add(robot);
-    }
-    
-    /**
-     * Answers if the blocks are equal
-     * @param Object object
-     * @return boolean
-     */
-    @Override
-    public boolean equals(Object object){
-        if(this == object)return true;
-        if (!(object instanceof Block)) return false;
-        Block block = (Block) object;
-        if(!this.getSideWalk().equals(block.getSideWalk()))return false;
-        if(!this.getMark().equals(block.getMark()))return false;
-        if(!this.getStreet().equals(block.getStreet()))return false;
-        if(this.getLocation()!=block.getLocation() || this.isHorizontal()!=block.isHorizontal() || this.getXPosition()!=block.getXPosition() ||
-        this.getYPosition()!=block.getYPosition())return false;
-        return true;
-    }
-    
-    /**
-     * Gets the sideWalk of the block
-     * @return Rectangle
-     */
-    public Rectangle getSideWalk(){
-        return sideWalk;
-    }
-    
-    /**
-     * Gets the mark of the block
-     * @return Rectangle
-     */
-    public Rectangle getMark(){
-        return mark;
-    }
-    
-    /**
-     * Gets the street of the block
-     * @return Rectangle
-     */
-    public Rectangle getStreet(){
-        return street;
-    }
-    
-    /**
-     * Gives the list of robot
-     * @return ArrayList<Robot>
-     */
-    public ArrayList<Robot> getRobots(){
-        return robots;
-    }
-    
-    /**
-     * Answeres if the road is visible
-     * @return boolean
-     */
-    public boolean isVisible(){
-        return isVisible;
-    }
-    
-    /**
      * Gives the xPosition of the bolck
      * @return int
      */
@@ -237,11 +83,74 @@ public class Block{
     }
     
     /**
-     * Makes its robots visible
+     * Answers if the block is horizontal
+     * @return boolean
      */
-    public void makeRobotsVisible(){
-        for(Robot r : robots){
-            r.makeVisible();
-        }
+    public boolean isHorizontal(){
+        return isHorizontal;
+    }
+    
+    /**
+     * Answers if the block has a store
+     * @return boolean
+     */
+    public boolean hasStore(){
+        return hasStore;
+    }
+    
+    /**
+     * Set the value of the atribute hasStore
+     * @param has
+     */
+    public void setHasStore(boolean has){
+        hasStore = has;
+    }
+    
+    /**
+     * Adds a robot to the list of robots that are in the block
+     * @param Robot robot
+     */
+    public void addRobot(Robot robot){
+        robots.add(robot);
+    }
+    
+    /**
+     * Answers if there are robots in the block
+     * @return boolean
+     */
+    public boolean hasRobots(){
+        return (robots.size() > 0) ? true : false;
+    }
+    
+    /**
+     * Gives the first robot in the list of robots that are in the block
+     * @return Robot
+     */
+    public Robot getFirstRobot(){
+        return robots.get(0);
+    }
+    
+    /**
+     * Gives the last robot that arrived to the block
+     * @return Robot
+     */
+    public Robot getLastRobot(){
+        return robots.get(robots.size()-1);
+    }
+    
+    /**
+     * Removes the given robot from the list of robots that are int he block
+     * @param Robot robot
+     */
+    public void removeRobot(Robot robot){
+        robots.remove(robot);
+    }
+    
+    /**
+     * Gives the list of robots in the block
+     * @return ArrayList<Robot>
+     */
+    public ArrayList<Robot> getRobots(){
+        return robots;
     }
 }

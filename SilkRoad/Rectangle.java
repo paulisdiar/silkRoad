@@ -150,14 +150,27 @@ public class Rectangle{
         return myColor;
     }
     
-    //Extras
+    /**
+     * Changes the rectangle size
+     * @param int h
+     * @param int w
+     */
+    public void changeSize(int h, int w){
+        height = h;
+        width = w;
+        if(isVisible)this.makeVisible();
+    }
+    
+    //Extra
     /*
      * Draw the rectangle with current specifications on screen.
      */
+
     private void draw() {
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
-            canvas.draw(this, color, new java.awt.Rectangle(xPosition, yPosition, 
+            canvas.draw(this, color,
+                new java.awt.Rectangle(xPosition, yPosition, 
                                        width, height));
             canvas.wait(10);
         }
@@ -172,6 +185,5 @@ public class Rectangle{
             canvas.erase(this);
         }
     }
-    
 }
 
