@@ -12,7 +12,7 @@ public class SilkRoadContest {
      * @param int[][] days
      * @return int []
     */
-    public int[] solve(int[][] days) {
+    public static int[] solve(int[][] days) {
         //Crear el simulador
         SilkRoad silkroad = new SilkRoad(days.length, days);
         //Crear arreglo para registrar ganancias diarias
@@ -31,8 +31,8 @@ public class SilkRoadContest {
      * @param int[][] days
      * @param boolean slow
      */
-        public void simulate(int[][] days, boolean slow) {
-         //Crear el simulador
+    public static void simulate(int[][] days, boolean slow) {
+        //Crear el simulador
         SilkRoad silkroad = new SilkRoad(days.length, days);
         silkroad.makeVisible();//Hacer visible
         //Simular dia dia
@@ -41,8 +41,6 @@ public class SilkRoadContest {
             silkroad.moveRobots();// mueve los robots para mayor profit
             // Mostrar ganancias del día
             int profitToday = silkroad.profit();
-            //Construir progressBar
-
             // slow
         }
     }

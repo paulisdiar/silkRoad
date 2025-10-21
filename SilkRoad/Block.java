@@ -25,10 +25,9 @@ public class Block{
      * @param boolean is Horizontal
      * @param int xPos
      * @param int yPos
-     * @param int location
      * @return Block
      */
-    public Block(boolean isHorizontal, int xPos, int yPos, int location){
+    public Block(boolean isHorizontal, int xPos, int yPos){
         this.isHorizontal = isHorizontal;
         xPosition = xPos;
         yPosition = yPos;

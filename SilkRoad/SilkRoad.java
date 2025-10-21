@@ -36,7 +36,7 @@ public class SilkRoad{
         road = new ArrayList<Block>();
         for(int i = 0; i < this.length; i++){
             int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
-            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1], i+1);
+            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1]);
             road.add(newBlock);
         }
         progressBar = new Bar();
@@ -303,7 +303,6 @@ public class SilkRoad{
         
         //Ciclo 2. Agruega los elementos del día en el que va la simulación
         if(actualDay < days){
-            actualDay ++;
             if(elements[actualDay][0] == 1){
                 placeRobot(elements[actualDay][1]);
                 if(isVisible){
@@ -317,6 +316,7 @@ public class SilkRoad{
                     newElement.makeVisible();
                 }
             }
+            actualDay ++;
         }
     }
     
@@ -403,17 +403,10 @@ public class SilkRoad{
         road = new ArrayList<Block>();
         for(int i = 0; i < length; i++){
             int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
-            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1], i+1);
+            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1]);
             road.add(newBlock);
         }
         progressBar = new Bar();
-        
-        //Adicionamos el elemento del primer día
-        if(elements[actualDay][0] == 1){
-            placeRobot(elements[actualDay][1]);
-        }else if(elements[actualDay][0] == 2){
-            placeStore(elements[actualDay][1], elements[actualDay][2]);
-        }
     }
     
     //Miniciclo 2

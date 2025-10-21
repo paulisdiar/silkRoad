@@ -1,9 +1,9 @@
 #BlueJ class context
 comment0.target=Block
 comment0.text=\r\n\ Write\ a\ description\ of\ class\ Block\ here.\r\n\ \r\n\ @author\ Paula\ D\u00EDaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 4\r\n
-comment1.params=isHorizontal\ xPos\ yPos\ location
-comment1.target=Block(boolean,\ int,\ int,\ int)
-comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Block\r\n\ @param\ boolean\ is\ Horizontal\r\n\ @param\ int\ xPos\r\n\ @param\ int\ yPos\r\n\ @param\ int\ location\r\n\ @return\ Block\r\n
+comment1.params=isHorizontal\ xPos\ yPos
+comment1.target=Block(boolean,\ int,\ int)
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Block\r\n\ @param\ boolean\ is\ Horizontal\r\n\ @param\ int\ xPos\r\n\ @param\ int\ yPos\r\n\ @return\ Block\r\n
 comment10.params=
 comment10.target=boolean\ hasRobots()
 comment10.text=\r\n\ Answers\ if\ there\ are\ robots\ in\ the\ block\r\n\ @return\ boolean\r\n

@@ -8,9 +8,9 @@
  */
 public class Bar{
     // instance variables - replace the example below with your own
-    private Rectangle total;
-    private Rectangle loader;
-    private int tot;
+    private Rectangle backGround;
+    private Rectangle filler;
+    private int total;
     private int progress;
     private boolean isVisible;
 
@@ -19,8 +19,8 @@ public class Bar{
      */
     public Bar(){
         isVisible = false;
-        total = new Rectangle(35, 205, 650, 425, UtilColors.getColor(UtilColors.awtColors.get(7)));
-        loader = new Rectangle(35, 5, 645, 425, UtilColors.getColor(UtilColors.awtColors.get(2)));
+        backGround = new Rectangle(35, 205, 650, 425, UtilColors.getColor(UtilColors.awtColors.get(7)));
+        filler = new Rectangle(35, 5, 645, 425, UtilColors.getColor(UtilColors.awtColors.get(2)));
     }
     
     /**
@@ -28,8 +28,8 @@ public class Bar{
      */
     public void makeVisible(){
         isVisible = true;
-        total.makeVisible();
-        loader.makeVisible();
+        backGround.makeVisible();
+        filler.makeVisible();
     }
     
     /**
@@ -37,8 +37,8 @@ public class Bar{
      */
     public void makeInvisible(){
         isVisible = false;
-        total.makeInvisible();
-        loader.makeInvisible();
+        backGround.makeInvisible();
+        filler.makeInvisible();
     }
     
     /**
@@ -46,7 +46,7 @@ public class Bar{
      * @param int total
      */
     public void updateTotal(int total){
-        tot = total;
+        this.total = total;
     }
     
     /**
@@ -55,12 +55,12 @@ public class Bar{
      */
     public void updateProgress(int profit){
         progress = profit;
-        if(profit > 0 && profit <= tot){
-            loader.changeSize(35, 5 + ((int) ((profit*100)/tot)));
-        }else if(profit > tot){
-            loader.changeSize(35, 205);
+        if(profit > 0 && profit <= total){
+            filler.changeSize(35, 5 + ((int) ((profit*100)/total)));
+        }else if(profit > total){
+            filler.changeSize(35, 205);
         }else if(profit < 0){
-            loader.changeSize(35, 5);
+            filler.changeSize(35, 5);
         }
     }
     
@@ -73,19 +73,19 @@ public class Bar{
      */
     public boolean equals(Object obj){
         if(obj instanceof Bar){
-            Rectangle t = ((Bar) obj).getTotal();
-            Rectangle l = ((Bar) obj).getLoader();
-            return (total.equals(t) && loader.equals(l)) ? true : false;
+            Rectangle t = ((Bar) obj).getBackGround();
+            Rectangle l = ((Bar) obj).getFiller();
+            return (backGround.equals(t) && filler.equals(l)) ? true : false;
         }
         return false;
     }
     
-    public Rectangle getTotal(){
-        return total;
+    public Rectangle getBackGround(){
+        return backGround;
     }
     
-    public Rectangle getLoader(){
-        return loader;
+    public Rectangle getFiller(){
+        return filler;
     }
     
 }

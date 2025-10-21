@@ -477,10 +477,6 @@ public class SilkRoadC2Test{
         assertTrue(simulator.getStores().size() == 0);
         assertEquals(simulator.getProgressBar(), testBar);
         assertTrue(simulator.getRoad().size() == 80);
-        //Se el primer elemento un robot
-        assertTrue(simulator.getRobots().size() == 1);
-        Robot newElement = simulator.getRobots().get(0);
-        assertTrue(newElement.getActualLocation() == 20 && newElement.getInitialLocation() == 20);
     }
     
     @Test
