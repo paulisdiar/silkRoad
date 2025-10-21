@@ -594,7 +594,6 @@ public class SilkRoadC2Test{
         assertArrayEquals(answer, profitsPerMove);
     }
     
-    
     @Test
     public void shouldNotProfitPerMove(){
         //Given

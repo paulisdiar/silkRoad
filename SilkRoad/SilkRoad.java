@@ -205,7 +205,7 @@ public class SilkRoad{
                         mover.teleportToBlock(position+1, road.get(position));
                         if(isVisible)mover.makeVisible();
                         try{
-                            Thread.sleep(2000);
+                            Thread.sleep(500);
                         }catch(InterruptedException e){}
                         if(isVisible)mover.makeInvisible();
                         steps --;
@@ -247,6 +247,7 @@ public class SilkRoad{
             lastDone = true;
         }else{
             lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "No hay tiendas que reabastecer.");
         }
     }
     
@@ -269,6 +270,7 @@ public class SilkRoad{
             lastDone = true;
         }else{
             lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "No hay robots que regresar.");
         }
     }
     
@@ -390,6 +392,7 @@ public class SilkRoad{
         this.days = days;
         actualDay = 0;
         int length = SRCalculator.determineLength(elements);
+        this.elements = elements;
         
         //Primer constructor
         this.length = Math.abs(length);

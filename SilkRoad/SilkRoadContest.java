@@ -7,7 +7,6 @@ import java.util.ArrayList;
  * @version 4
  */
 public class SilkRoadContest {
-
     /**
      * Calculate the max profit given the information for each day.
      * @param int[][] days
