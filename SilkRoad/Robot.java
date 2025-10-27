@@ -9,13 +9,13 @@ import java.util.ArrayList;
  */
 public class Robot{
     //Atributes
-    private Rectangle head;
-    private Rectangle body;
-    private final int initialLocation;
-    private int actualLocation;
-    private int profit;
-    private boolean isVisible;
-    private ArrayList<Integer> profitsPerMove;
+    protected Rectangle head;
+    protected Rectangle body;
+    protected final int initialLocation;
+    protected int actualLocation;
+    protected int profit;
+    protected boolean isVisible;
+    protected ArrayList<Integer> profitsPerMove;
     
     //Methods
     /**

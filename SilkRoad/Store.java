@@ -7,13 +7,13 @@
  */
 public class Store{
     //Atributes
-    private Rectangle facade;
-    private Triangle roof;
-    private final int location;
-    private final int stash;
-    private int timesStolen; //Ciclo 2
-    private boolean full;
-    private boolean isVisible;
+    protected Rectangle facade;
+    protected Triangle roof;
+    protected final int location;
+    protected final int stash;
+    protected int left;
+    protected int timesStolen; //Ciclo 2
+    protected boolean isVisible;
     
     //Methods
     /**
@@ -26,7 +26,7 @@ public class Store{
         this.location = location;
         stash = tenges;
         timesStolen = 0; //Ciclo 2
-        full = true;
+        left = tenges;
         isVisible = false;
         int x = block.getXPosition();
         int y = block.getYPosition();
@@ -70,18 +70,16 @@ public class Store{
      * Answers if the store is full
      * qreturn boolean
      */
-    public boolean isFull(){
-        return full;
+    public boolean hasTenges(){
+        return left > 0;
     }
     
     /**
-     * Set the value of the full atribute
-     * @param boolean is
+     * Resets the store stash
      */
-    public void setFull(boolean is){
-        if(!is)timesStolen ++;
-        full = is;
-        changeColor(is);
+    public void setFull(){
+        left = stash;
+        changeColor(true);
         if(isVisible)makeVisible();
     }
     
@@ -94,11 +92,45 @@ public class Store{
     }
     
     /**
+     * Gives the amout of tenges that are left
+     * @return int
+     */
+    public int getLeft(){
+        return left;
+    }
+    
+    /**
      * Gives the times the store has been stolen
      * @return int
      */
     public int getTimesStolen(){
         return timesStolen;
+    }
+    
+    /**
+     * Set the value of left atribute
+     * @param int l
+     */
+    public void setLeft(int l){
+        left = l;
+    }
+    
+    /**
+     * Increases the count of times stolen
+     */
+    public void stolen(){
+        timesStolen++;
+    }
+    
+    /**
+     * Changes the color of the store depending on the tenges left
+     */
+    public void updateColor(){
+        if(left == 0){
+            changeColor(false);
+        }else{
+            changeColor(true);
+        }
     }
     
     /**

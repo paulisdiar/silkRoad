@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Tender
+comment0.text=\r\n\ A\ robot\ that\ only\ steels\ half\ of\ the\ store.\r\n\ \r\n\ @author\ Paula\ Diaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 4\r\n
+comment1.params=inLocation\ inBlock
+comment1.target=Tender(int,\ Block)
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Tender\r\n\ @param\ int\ inLocation\r\n\ @param\ Block\ block\r\n
+numComments=2

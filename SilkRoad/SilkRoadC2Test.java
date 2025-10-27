@@ -64,14 +64,14 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(34);
         //When
-        simulator.placeStore(34, 100);
+        simulator.placeStore("normal", 34, 100);
         //Then
         assertTrue(simulator.getStores().get(0) instanceof Store);
         Store newStore = simulator.getStores().get(0);
         assertTrue(newStore.getLocation() == 34);
         assertTrue(newStore.getStash() == 100);
         assertTrue(newStore.getTimesStolen() == 0);
-        assertTrue(newStore.isFull());
+        assertTrue(newStore.hasTenges());
     }
     
     @Test
@@ -79,7 +79,7 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(50);
         //When
-        simulator.placeStore(-12, 55);
+        simulator.placeStore("normal", -12, 55);
         //then
         assertFalse(simulator.ok());
     }
@@ -89,7 +89,7 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(34);
         //When
-        simulator.placeStore(34, -1);
+        simulator.placeStore("normal", 34, -1);
         //Then
         assertFalse(simulator.ok());
     }
@@ -98,9 +98,9 @@ public class SilkRoadC2Test{
     public void shouldNotPlaceStore3(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeStore(1, 4);
+        simulator.placeStore("normal", 1, 4);
         //When
-        simulator.placeStore(1, 100);
+        simulator.placeStore("normal", 1, 100);
         //Then
         assertFalse(simulator.ok());
         Store newStore = simulator.getStores().get(0);
@@ -112,7 +112,7 @@ public class SilkRoadC2Test{
     public void shouldRemoveStore(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeStore(10, 10);
+        simulator.placeStore("normal", 10, 10);
         //When
         simulator.removeStore(10);
         //Then
@@ -125,7 +125,7 @@ public class SilkRoadC2Test{
     public void shouldNotRemoveStore(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeStore(20, 20);
+        simulator.placeStore("normal", 20, 20);
         //When
         simulator.removeStore(25);
         //Then
@@ -136,7 +136,7 @@ public class SilkRoadC2Test{
     public void shouldNotRemoveStore2(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeStore(11, 20);
+        simulator.placeStore("normal", 11, 20);
         //When
         simulator.removeStore(10);
         //Then
@@ -148,7 +148,7 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         //When
-        simulator.placeRobot(1);
+        simulator.placeRobot("normal", 1);
         //Then
         assertTrue(simulator.getRobots().size() == 1);
         Robot newRobot = simulator.getRobots().get(0);
@@ -163,7 +163,7 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         //When
-        simulator.placeRobot(-14);
+        simulator.placeRobot("normal", -14);
         //Then
         assertFalse(simulator.ok());
     }
@@ -173,7 +173,7 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         //When
-        simulator.placeRobot(21);
+        simulator.placeRobot("normal", 21);
         //Then
         assertFalse(simulator.ok());
     }
@@ -182,7 +182,7 @@ public class SilkRoadC2Test{
     public void shouldRemoveRobot(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeRobot(12);
+        simulator.placeRobot("normal", 12);
         //When
         simulator.removeRobot(12);
         //Then
@@ -225,7 +225,7 @@ public class SilkRoadC2Test{
     public void shouldMoveRobot(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeRobot(5);
+        simulator.placeRobot("normal", 5);
         //When
         simulator.moveRobot(5, 5);
         //Then
@@ -241,8 +241,8 @@ public class SilkRoadC2Test{
     public void shouldMoveRobot2(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeStore(3, 7);
-        simulator.placeRobot(7);
+        simulator.placeStore("normal", 3, 7);
+        simulator.placeRobot("normal", 7);
         //When
         simulator.moveRobot(7, -4);
         //Then
@@ -254,16 +254,16 @@ public class SilkRoadC2Test{
         assertTrue(mover.getProfit() == 3);
         Store stolen = simulator.getStores().get(0);
         assertTrue(stolen.getTimesStolen() == 1);
-        assertFalse(stolen.isFull());
+        assertFalse(stolen.hasTenges());
     }
     
     @Test
     public void shoulMoveRobot3(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeStore(3, 7);
-        simulator.placeRobot(7);
-        simulator.placeRobot(6);
+        simulator.placeStore("normal", 3, 7);
+        simulator.placeRobot("normal", 7);
+        simulator.placeRobot("normal", 6);
         simulator.moveRobot(7, -1);
         //When
         simulator.moveRobot(6, -3);
@@ -281,7 +281,7 @@ public class SilkRoadC2Test{
         assertTrue(mover2.getProfit() == 4);
         Store stolen = simulator.getStores().get(0);
         assertTrue(stolen.getTimesStolen() == 1);
-        assertFalse(stolen.isFull());
+        assertFalse(stolen.hasTenges());
     }
     
     @Test
@@ -308,7 +308,7 @@ public class SilkRoadC2Test{
     public void shouldNotMoveRobot3(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(1);
+        simulator.placeRobot("normal", 1);
         //When
         simulator.moveRobot(1, -5);
         //Then
@@ -323,10 +323,10 @@ public class SilkRoadC2Test{
     public void shouldResupplyStores(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(2);
-        simulator.placeStore(3, 5);
-        simulator.placeStore(4, 1);
-        simulator.placeStore(5,2);
+        simulator.placeRobot("normal",2);
+        simulator.placeStore("normal", 3, 5);
+        simulator.placeStore("normal", 4, 1);
+        simulator.placeStore("normal", 5,2);
         simulator.moveRobot(2, 1);
         simulator.moveRobot(3, 1);
         simulator.moveRobot(4, 1);
@@ -337,9 +337,9 @@ public class SilkRoadC2Test{
         Store store1 = simulator.getStores().get(0);
         Store store2 = simulator.getStores().get(1);
         Store store3 = simulator.getStores().get(2);
-        assertTrue(store1.getTimesStolen() == 1 && store1.isFull());
-        assertTrue(store2.getTimesStolen() == 1 && store2.isFull());
-        assertTrue(store3.getTimesStolen() == 1 && store3.isFull());
+        assertTrue(store1.getTimesStolen() == 1 && store1.hasTenges());
+        assertTrue(store2.getTimesStolen() == 1 && store2.hasTenges());
+        assertTrue(store3.getTimesStolen() == 1 && store3.hasTenges());
     }
     
     @Test
@@ -356,8 +356,8 @@ public class SilkRoadC2Test{
     public void shouldReturnRobots(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(10);
-        simulator.placeRobot(1);
+        simulator.placeRobot("normal", 10);
+        simulator.placeRobot("normal", 1);
         simulator.moveRobot(10, -5);
         simulator.moveRobot(1, 4);
         //When
@@ -388,10 +388,10 @@ public class SilkRoadC2Test{
     public void shouldRebbot(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(2);
-        simulator.placeStore(3, 5);
-        simulator.placeStore(4, 1);
-        simulator.placeStore(5,2);
+        simulator.placeRobot("normal", 2);
+        simulator.placeStore("normal", 3, 5);
+        simulator.placeStore("normal", 4, 1);
+        simulator.placeStore("normal", 5,2);
         simulator.moveRobot(2, 1);
         simulator.moveRobot(3, 1);
         simulator.moveRobot(4, 1);
@@ -402,9 +402,9 @@ public class SilkRoadC2Test{
         Store store1 = simulator.getStores().get(0);
         Store store2 = simulator.getStores().get(1);
         Store store3 = simulator.getStores().get(2);
-        assertTrue(store1.getTimesStolen() == 1 && store1.isFull());
-        assertTrue(store2.getTimesStolen() == 1 && store2.isFull());
-        assertTrue(store3.getTimesStolen() == 1 && store3.isFull());
+        assertTrue(store1.getTimesStolen() == 1 && store1.hasTenges());
+        assertTrue(store2.getTimesStolen() == 1 && store2.hasTenges());
+        assertTrue(store3.getTimesStolen() == 1 && store3.hasTenges());
         Robot mover = simulator.getRobots().get(0);
         assertTrue(mover.getInitialLocation() == 2 && mover.getActualLocation() == 2 && mover.getProfit() == 5);
     }
@@ -413,10 +413,10 @@ public class SilkRoadC2Test{
     public void shouldProfit(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(1);
-        simulator.placeRobot(5);
-        simulator.placeRobot(7);
-        simulator.placeStore(8, 30);
+        simulator.placeRobot("normal", 1);
+        simulator.placeRobot("normal", 5);
+        simulator.placeRobot("normal", 7);
+        simulator.placeStore("normal", 8, 30);
         simulator.moveRobot(7, 1);
         simulator.moveRobot(1, 5);
         simulator.moveRobot(5, 5);
@@ -431,10 +431,10 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         int[][] answer = {{3, 15}, {7, 1}, {16, 1000}, {20, 20}};
-        simulator.placeStore(16, 1000);
-        simulator.placeStore(20, 20);
-        simulator.placeStore(7, 1);
-        simulator.placeStore(3, 15);
+        simulator.placeStore("normal", 16, 1000);
+        simulator.placeStore("normal", 20, 20);
+        simulator.placeStore("normal", 7, 1);
+        simulator.placeStore("normal", 3, 15);
         //When
         int[][] stores = simulator.stores();
         //Then
@@ -446,13 +446,13 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(25);
         int[][] answer = {{4, 0}, {15, -4}, {15, 4}, {22 ,3}};
-        simulator.placeStore(10, 100);
-        simulator.placeStore(15, 10);
-        simulator.placeStore(22, 14);
-        simulator.placeRobot(4);
-        simulator.placeRobot(11);
-        simulator.placeRobot(11);
-        simulator.placeRobot(21);
+        simulator.placeStore("normal", 10, 100);
+        simulator.placeStore("normal", 15, 10);
+        simulator.placeStore("normal", 22, 14);
+        simulator.placeRobot("normal", 4);
+        simulator.placeRobot("normal", 11);
+        simulator.placeRobot("normal", 11);
+        simulator.placeRobot("normal", 21);
         simulator.moveRobot(11, 11);
         simulator.moveRobot(21, -6);
         simulator.moveRobot(11, 4);
@@ -483,15 +483,15 @@ public class SilkRoadC2Test{
     public void shouldMoveRobots(){
         //Given
         SilkRoad simulator = new SilkRoad(20);
-        simulator.placeStore(4, 12);
-        simulator.placeStore(9, 4);
-        simulator.placeStore(17, 9);
-        simulator.placeStore(15, 40);
-        simulator.placeRobot(13);
-        simulator.placeRobot(19);
-        simulator.placeRobot(5);
-        simulator.placeRobot(16);
-        simulator.placeRobot(4);
+        simulator.placeStore("normal", 4, 12);
+        simulator.placeStore("normal", 9, 4);
+        simulator.placeStore("normal", 17, 9);
+        simulator.placeStore("normal", 15, 40);
+        simulator.placeRobot("normal", 13);
+        simulator.placeRobot("normal", 19);
+        simulator.placeRobot("normal", 5);
+        simulator.placeRobot("normal", 16);
+        simulator.placeRobot("normal", 4);
         //When
         simulator.moveRobots();
         //Then
@@ -512,7 +512,7 @@ public class SilkRoadC2Test{
     public void shouldNotMoveRobots(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeStore(5, 100);
+        simulator.placeStore("normal", 5, 100);
         //When
         simulator.moveRobots();
         //Then
@@ -523,7 +523,7 @@ public class SilkRoadC2Test{
     public void shouldNotMoveRobots2(){
         //Given
         SilkRoad simulator = new SilkRoad(10);
-        simulator.placeRobot(5);
+        simulator.placeRobot("normal", 5);
         //When
         simulator.moveRobots();
         //Then
@@ -535,10 +535,10 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         int[][] answer = {{5, 4}, {11, 1}, {15, 2}};
-        simulator.placeStore(15, 8);
-        simulator.placeStore(5, 23);
-        simulator.placeStore(11, 14);
-        simulator.placeRobot(12);
+        simulator.placeStore("normal", 15, 8);
+        simulator.placeStore("normal", 5, 23);
+        simulator.placeStore("normal", 11, 14);
+        simulator.placeRobot("normal",12);
         simulator.moveRobot(12,-1);
         simulator.moveRobot(11, 4);
         simulator.moveRobot(15, -10);
@@ -570,10 +570,10 @@ public class SilkRoadC2Test{
         //Given
         SilkRoad simulator = new SilkRoad(20);
         int[][] answer = {{5, 4}, {11, 1}, {15, 2}};
-        simulator.placeStore(15, 8);
-        simulator.placeStore(5, 23);
-        simulator.placeStore(11, 14);
-        simulator.placeRobot(12);
+        simulator.placeStore("normal", 15, 8);
+        simulator.placeStore("normal", 5, 23);
+        simulator.placeStore("normal", 11, 14);
+        simulator.placeRobot("normal",12);
         simulator.moveRobot(12,-1);
         simulator.moveRobot(11, 4);
         simulator.moveRobot(15, -10);

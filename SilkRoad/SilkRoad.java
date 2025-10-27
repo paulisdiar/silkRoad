@@ -18,16 +18,17 @@ public class SilkRoad{
     private ArrayList<Block> road;
     private ArrayList<Robot> robots;
     private ArrayList<Store> stores;
-    private int[] dailyProfits;
     private int[][] elements;
     private Bar progressBar;
+    private SRCalculator SRC;
     
     //Ciclo 1
     //Miniciclo 1
     /**
      * Constructor for objects of class SilkRoad
      */
-    public SilkRoad(int length){        
+    public SilkRoad(int length){
+        SRC = new SRCalculator();
         this.length = Math.abs(length);
         isVisible = false;
         lastDone = true;
@@ -35,12 +36,11 @@ public class SilkRoad{
         robots = new ArrayList<Robot>();
         road = new ArrayList<Block>();
         for(int i = 0; i < this.length; i++){
-            int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
-            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1]);
+            int[] coordinates = SRC.determineCoordinates(SRC.isHorizontal());
+            Block newBlock = new Block(SRC.isHorizontal(), coordinates[0], coordinates[1]);
             road.add(newBlock);
         }
         progressBar = new Bar();
-        
         //Los demás atributos no son necesarios, el único es days y actualDay por ser final y facilidad
         days = 0;
         actualDay = 0;
@@ -87,14 +87,27 @@ public class SilkRoad{
     //Miniciclo 2
     /**
      * Adds a store in the given location with the given tenges
+     * @param String type
      * @param int location
      * @param int tenges
      */
-    public void placeStore(int location, int tenges){
+    public void placeStore(String type, int location, int tenges){
+        if(type.equals("autonomous"))location = SRCalculator.getRandom(length);
         if((0 <= location-1 && location-1 < length) && tenges >= 0){
             Block b = road.get(location-1);
             if(!b.hasStore()){
-                Store newStore = new Store(location, tenges, b);
+                Store newStore;
+                switch (type){
+                    case "autonomous":
+                        newStore = new Autonomous(location, tenges, b);
+                        break;
+                    case "fighter":
+                        newStore = new Fighter(location, tenges, b);
+                        break;
+                    default:
+                        newStore = new Store(location, tenges, b);
+                        break;
+                }
                 if(isVisible)newStore.makeVisible();
                 stores.add(newStore);
                 b.setHasStore(true);
@@ -145,12 +158,24 @@ public class SilkRoad{
     //Miniciclo 3
     /**
      * Adds a robot in the Given location
-     * @int location
+     * @param String type
+     * @param int location
      */
-    public void placeRobot(int location){
+    public void placeRobot(String type, int location){
         if(0 <= location-1 && location-1 < length){
             Block b = road.get(location-1);
-            Robot newRobot = new Robot(location, b);
+            Robot newRobot;
+            switch (type){
+                case "neverback":
+                    newRobot = new NeverBack(location, b);
+                    break;
+                case "tender":
+                    newRobot = new Tender(location, b);
+                    break;
+                default:
+                    newRobot = new Robot(location, b);
+                    break;
+            }
             b.addRobot(newRobot);
             robots.add(newRobot);
             if(isVisible)newRobot.makeVisible();
@@ -186,7 +211,7 @@ public class SilkRoad{
     
     //Miniciclo 4
     /**
-     * Moves a robot some meter from the given location
+     * Moves a robot some meter from the given location. This happens slow (step by step)
      * @param int location
      * @param int meters
      */
@@ -194,36 +219,51 @@ public class SilkRoad{
         if(0 <= location-1 && location-1 < length){
             Block b = road.get(location-1);
             if(b.hasRobots()){
-                if(0 < location+meters && location+meters <= length){
-                    int direction = (meters > 0) ? +1 : -1;
-                    int steps = Math.abs(meters);
-                    int position = location-1;
-                    Robot mover = b.getFirstRobot();
-                    b.removeRobot(mover);
-                    while(steps > 0){
-                        position += direction;
-                        mover.teleportToBlock(position+1, road.get(position));
+                Robot mover = b.getFirstRobot();
+                if((mover instanceof NeverBack && meters > 0) || !(mover instanceof NeverBack)){
+                    if(0 < location+meters && location+meters <= length){
+                        int direction = (meters > 0) ? +1 : -1;
+                        int steps = Math.abs(meters);
+                        int position = location-1;
+                        b.removeRobot(mover);
+                        while(steps > 0){
+                            position += direction;
+                            mover.teleportToBlock(position+1, road.get(position));
+                            if(isVisible)mover.makeVisible();
+                            try{
+                                Thread.sleep(500);
+                            }catch(InterruptedException e){}
+                            if(isVisible)mover.makeInvisible();
+                            steps --;
+                        }
                         if(isVisible)mover.makeVisible();
-                        try{
-                            Thread.sleep(500);
-                        }catch(InterruptedException e){}
-                        if(isVisible)mover.makeInvisible();
-                        steps --;
+                        Block finalB = road.get(position);
+                        finalB.addRobot(mover);
+                        Store s = findStore(position+1);
+                        if(s != null && s.hasTenges()){
+                            if((s instanceof Fighter && mover.getProfit() > s.getStash()) || !(s instanceof Fighter)){
+                                if(mover instanceof Tender){
+                                    mover.steelTenges(s.getLeft()/2, Math.abs(meters));
+                                    s.setLeft(s.getLeft()/2);
+                                }else{
+                                    mover.steelTenges(s.getLeft(), Math.abs(meters));
+                                    s.setLeft(0);
+                                }
+                                s.updateColor();
+                                s.stolen();
+                                if(isVisible)s.makeVisible();
+                            }
+                        }else if(s == null || !s.hasTenges()){
+                            mover.steelTenges(0, Math.abs(meters));
+                        }
+                        progressBar.updateProgress(profit());
+                    }else{
+                        lastDone = false;
+                        if(isVisible)JOptionPane.showMessageDialog(null, "El movimiento supera los limites de la ruta.");
                     }
-                    if(isVisible)mover.makeVisible();
-                    Block finalB = road.get(position);
-                    finalB.addRobot(mover);
-                    Store s = findStore(position+1);
-                    if(s != null && s.isFull()){
-                        s.setFull(false);
-                        mover.steelTenges(s.getStash(), Math.abs(meters));
-                    }else if(s == null || !s.isFull()){
-                        mover.steelTenges(0, Math.abs(meters));
-                    }
-                    progressBar.updateProgress(profit());
                 }else{
                     lastDone = false;
-                    if(isVisible)JOptionPane.showMessageDialog(null, "El movimiento supera los limites de la ruta.");
+                    if(isVisible)JOptionPane.showMessageDialog(null, "Este tipo de robot no puede ir hacia la izquierda.");
                 }
             }else{
                 lastDone = false;
@@ -242,7 +282,7 @@ public class SilkRoad{
     public void resupplyStores(){
         if(stores.size() > 0){
             for(Store s : stores){
-                  if(!s.isFull())s.setFull(true);
+                  if(!s.hasTenges())s.setFull();
             }
             lastDone = true;
         }else{
@@ -282,7 +322,7 @@ public class SilkRoad{
         //refill stores
         if(stores.size() > 0){
             for(Store s : stores){
-                  if(!s.isFull())s.setFull(true);
+                  if(!s.hasTenges())s.setFull();
             }
             lastDone = true;
         }
@@ -304,13 +344,13 @@ public class SilkRoad{
         //Ciclo 2. Agruega los elementos del día en el que va la simulación
         if(actualDay < days){
             if(elements[actualDay][0] == 1){
-                placeRobot(elements[actualDay][1]);
+                placeRobot("normal", elements[actualDay][1]);
                 if(isVisible){
                     Robot newElement = road.get(elements[actualDay][1]-1).getLastRobot();
                     newElement.makeVisible();
                 }
             }else if(elements[actualDay][0] == 2){
-                placeStore(elements[actualDay][1], elements[actualDay][2]);
+                placeStore("normal", elements[actualDay][1], elements[actualDay][2]);
                 if(isVisible){
                     Store newElement = findStore(elements[actualDay][1]);
                     newElement.makeVisible();
@@ -395,6 +435,7 @@ public class SilkRoad{
         this.elements = elements;
         
         //Primer constructor
+        SRC = new SRCalculator();
         this.length = Math.abs(length);
         isVisible = false;
         lastDone = true;
@@ -402,8 +443,8 @@ public class SilkRoad{
         robots = new ArrayList<Robot>();
         road = new ArrayList<Block>();
         for(int i = 0; i < length; i++){
-            int[] coordinates = SRCalculator.determineCoordinates(SRCalculator.isHorizontal);
-            Block newBlock = new Block(SRCalculator.isHorizontal(), coordinates[0], coordinates[1]);
+            int[] coordinates = SRC.determineCoordinates(SRC.isHorizontal());
+            Block newBlock = new Block(SRC.isHorizontal(), coordinates[0], coordinates[1]);
             road.add(newBlock);
         }
         progressBar = new Bar();
@@ -499,6 +540,70 @@ public class SilkRoad{
     }
     
     //Extra
+    /**
+     * Moves a robot some meter from the given location. This happens fast (a jump from location to locatio+meters)
+     * @param int location
+     * @param int meters
+     */
+    public void moveRobotFast(int location, int meters){
+        if(0 <= location-1 && location-1 < length){
+            Block bInitial = road.get(location-1);
+            if(bInitial.hasRobots()){
+                if(0 < location+meters && location+meters <= length){
+                    Robot mover = bInitial.getFirstRobot();
+                    bInitial.removeRobot(mover);
+                    Block bFinal = road.get(location-1+meters);
+                    mover.teleportToBlock(location+meters, bFinal);
+                    bFinal.addRobot(mover);
+                    if(isVisible)mover.makeVisible();
+                    Store s = findStore(location+meters);
+                    if(s != null && s.hasTenges()){
+                        if((s instanceof Fighter && mover.getProfit() > s.getStash()) || !(s instanceof Fighter)){
+                            if(mover instanceof Tender){
+                                mover.steelTenges(s.getLeft()/2, Math.abs(meters));
+                                s.setLeft(s.getLeft()/2);
+                            }else{
+                                mover.steelTenges(s.getLeft(), Math.abs(meters));
+                                s.setLeft(0);
+                            }
+                            s.updateColor();
+                            s.stolen();
+                            if(isVisible)s.makeVisible();
+                        }
+                    }else if(s == null || !s.hasTenges()){
+                        mover.steelTenges(0, Math.abs(meters));
+                    }
+                    progressBar.updateProgress(profit());
+                }else{
+                    lastDone = false;
+                    if(isVisible)JOptionPane.showMessageDialog(null, "El movimiento supera los limites de la ruta.");
+                }
+            }else{
+                lastDone = false;
+                if(isVisible)JOptionPane.showMessageDialog(null, "No hay robot para mover.");
+            }
+        }else{
+            lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "Ubicación inválida");
+        }
+    }
+    
+    /**
+     * Moves the robots based on maximazing the total profit. works like the original but moves robots faster
+     */
+    public void moveRobotsFast(){
+        if(stores.size() > 0 && robots.size() > 0){
+            ArrayList<int[]> listMovements = SRCalculator.determineMoves(robots, stores);
+            for(int[] move : listMovements){
+                moveRobotFast(move[0], move[1]);
+            }
+            lastDone = true;
+        }else{
+            lastDone = false;
+            if(isVisible)JOptionPane.showMessageDialog(null, "No hay robots o tiendas.");
+        }
+    }
+    
     /**
      * Finds the store in the given location. It must be previuosly guaranted the there is a store
      * @param int location

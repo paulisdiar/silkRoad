@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * This class is in charge of all calculation and utility methods of the simulator
@@ -10,12 +11,12 @@ import java.util.ArrayList;
  */
 public class SRCalculator{
     // The next set of atributes are used to set the blocks x,y position in the canvas
-    private static int[] verticalLimits = {60, 900};
-    private static int[] horizontalLimits = {0, 1500};
-    public static boolean isHorizontal = true;
-    private static int actualX = 0;
-    private static int actualY = 20;
-    private static int direction = 1;
+    private int[] verticalLimits = {60, 900};
+    private int[] horizontalLimits = {0, 1500};
+    private boolean isHorizontal = true;
+    private int actualX = 0;
+    private int actualY = 20;
+    private int direction = 1;
     //
     /**
      * Constructor for objects of class SRCalculator
@@ -27,7 +28,7 @@ public class SRCalculator{
      * @param boolean isH
      * @return int[]
      */
-    public static int[] determineCoordinates(boolean isH){
+    public int[] determineCoordinates(boolean isH){
         int[] coordinates = new int[2];
         if(isHorizontal){
             if(direction == 1 && actualX+45 > horizontalLimits[1]){
@@ -79,7 +80,7 @@ public class SRCalculator{
      * Gives the actual value of the isHorizontal atribute
      * @return boolean
      */
-    public static boolean isHorizontal(){
+    public boolean isHorizontal(){
         return isHorizontal;
     }
     
@@ -142,7 +143,7 @@ public class SRCalculator{
     
     /**
      * Determines the optimum moves the robots must do to maximize the profit
-     * @param ArrayList<Robot
+     * @param ArrayList<Robot> robots
      * @param ArrayList<Store> stores
      * @return ArrayList<int[]>
      */
@@ -162,7 +163,7 @@ public class SRCalculator{
         //solución
         for(int s = 0; s < storesArray.length; s++){
             int[][] distances = new int[robots.size()][2];
-            if(stores.get(s).isFull()){
+            if(stores.get(s).hasTenges()){
                 int[] move = new int[2];
                 int xS = storesArray[s][0];
                 for(int r = 0; r < robotsArray.length; r++){
@@ -200,5 +201,15 @@ public class SRCalculator{
             total += s.getStash();
         }
         return total;
+    }
+    
+    /**
+     * Gives a random number between the 1 and the given limit
+     * @param int limit
+     * @return int
+     */
+    public static int getRandom(int limit){
+        Random random = new Random();
+        return random.nextInt(limit) +1;
     }
 }

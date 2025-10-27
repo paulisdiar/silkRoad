@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Fighter
+comment0.text=\r\n\ This\ store\ only\ can\ be\ steel\ if\ the\ robot\ has\ more\ profit\r\n\ \r\n\ @author\ Paula\ Diaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 4\r\n
+comment1.params=location\ tenges\ block
+comment1.target=Fighter(int,\ int,\ Block)
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Autonomous\r\n\ @param\ int\ location\r\n\ @param\ int\ tenges\r\n\ @param\ Block\ block\r\n
+numComments=2

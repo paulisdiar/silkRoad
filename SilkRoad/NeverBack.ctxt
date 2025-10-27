@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=NeverBack
+comment0.text=\r\n\ A\ type\ of\ robot\ that\ only\ moves\ right\r\n\ \r\n\ @author\ Paula\ Diaz\r\n\ @author\ Juan\ Pablo\ V\u00E9lez\r\n\ @version\ 4\r\n
+comment1.params=inLocation\ inBlock
+comment1.target=NeverBack(int,\ Block)
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ NeverBack\r\n\ @param\ int\ inLocation\r\n\ @param\ Block\ block\r\n
+numComments=2
