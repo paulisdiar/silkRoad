@@ -4,11 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
 /**
  * The test class SilkRoadTest.
  *
- * @author  Juan Pablo Vélez
+ * @author Juan Pablo Vélez
  * @author Paula Díaz
  * @version 4
  */

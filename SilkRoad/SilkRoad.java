@@ -252,6 +252,8 @@ public class SilkRoad{
                                 s.updateColor();
                                 s.stolen();
                                 if(isVisible)s.makeVisible();
+                            }else{
+                                mover.steelTenges(0, Math.abs(meters));
                             }
                         }else if(s == null || !s.hasTenges()){
                             mover.steelTenges(0, Math.abs(meters));
@@ -569,6 +571,8 @@ public class SilkRoad{
                             s.updateColor();
                             s.stolen();
                             if(isVisible)s.makeVisible();
+                        }else{
+                            mover.steelTenges(0, Math.abs(meters));
                         }
                     }else if(s == null || !s.hasTenges()){
                         mover.steelTenges(0, Math.abs(meters));
